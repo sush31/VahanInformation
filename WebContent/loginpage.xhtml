@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<!--<h:head>-->
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</h:head>
+<h:body>
+	<h:form>
+		<h:outputLabel for="state">Select State</h:outputLabel>
+		<h:selectOneMenu id="state" value="#{loginBean.selectedState}">
+			<f:selectItem itemLabel="Select state" itemValue="" />
+			<f:selectItems value="#{loginBean.state_list}" var="item"
+				itemLabel="#{item.label}" itemValue="#{item.value}" />
+			<p:ajax event="change" execute="@this" render="servicedropdown" listener="#{loginBean.getServiceList}" />
+        
+		</h:selectOneMenu>
+        <br/><br/>
+		<h:outputLabel for="Service">Select Service</h:outputLabel>
+		<h:selectOneMenu id="servicedropdown" value="#{loginBean.selectedService}">
+			<f:selectItem itemLabel="Select Service" itemValue="" />
+			<f:selectItems value="#{loginBean.service_list}" var="service"
+				itemLabel="#{service.label}" itemValue="#{service.value}" />
+		</h:selectOneMenu>
+</h:form>
+</h:body>
+</html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context path="/onlinepermit" antiJARLocking="true">
+
+	<!-- UP IP:10.135.0.66 10.248.210.236 -->
+
+
+	<!-- <Resource auth="Container" driverClassName="org.postgresql.Driver" -->
+	<!-- maxActive="50" maxIdle="10" maxWait="20000" name="jdbc/vow4" password="nic@123" -->
+	<!-- removeAbandoned="true" removeAbandonedTimeout="120" type="javax.sql.DataSource" -->
+	<!-- url="jdbc:postgresql://10.248.210.236:5432/vow4_state_cd" username="postgres"/> -->
+	<!-- <Resource auth="Container" driverClassName="org.postgresql.Driver" 
+		maxActive="50" -->
+	<!-- maxIdle="10" maxWait="20000" name="jdbc/vow4dash" password="nic@123" 
+		removeAbandoned="true" -->
+	<!-- removeAbandonedTimeout="120" type="javax.sql.DataSource" url="jdbc:postgresql://10.248.210.236:5432/vow4_state_cd" -->
+	<!-- username="postgres"/> -->
+
+
+
+
+	<Resource auth="Container" driverClassName="org.postgresql.Driver"
+	maxActive="50" maxIdle="10" maxWait="20000" name="jdbc/vow4" password="v4app"
+	removeAbandoned="true" removeAbandonedTimeout="120" type="javax.sql.DataSource"
+	url="jdbc:postgresql://10.246.40.238:5444/vow4" username="app_v4" />
+
+	<Resource auth="Container" driverClassName="org.postgresql.Driver"
+	maxActive="50" maxIdle="10" maxWait="20000" name="jdbc/vow4dash"
+	password="v4app" removeAbandoned="true" removeAbandonedTimeout="120"
+	type="javax.sql.DataSource" url="jdbc:postgresql://10.246.40.238:5444/vow4"
+	username="app_v4" />
+
+
+
+	<!-- <Resource auth="Container" driverClassName="org.postgresql.Driver" -->
+	<!-- maxActive="50" maxIdle="10" maxWait="20000" name="jdbc/vow4" password="nic@123" -->
+	<!-- removeAbandoned="true" removeAbandonedTimeout="120" type="javax.sql.DataSource" -->
+	<!-- url="jdbc:postgresql://10.248.210.236:5432/vow4_state_cd" username="postgres"/> -->
+	<!-- <Resource auth="Container" driverClassName="org.postgresql.Driver" 
+		maxActive="50" -->
+	<!-- maxIdle="10" maxWait="20000" name="jdbc/vow4dash" password="nic@123" 
+		removeAbandoned="true" -->
+	<!-- removeAbandonedTimeout="120" type="javax.sql.DataSource" url="jdbc:postgresql://10.248.210.236:5432/vow4_state_cd" -->
+	<!-- username="postgres"/> -->
+
+
+	<!-- <Resource auth="Container" driverClassName="org.postgresql.Driver" 
+		maxActive="50" maxIdle="10" maxWait="20000" name="jdbc/vow4" password="vahan4@123" 
+		removeAbandoned="true" removeAbandonedTimeout="120" type="javax.sql.DataSource" 
+		url="jdbc:postgresql://10.249.163.112:5432/vow4" username="postgres"/> <Resource 
+		auth="Container" driverClassName="org.postgresql.Driver" maxActive="50" maxIdle="10" 
+		maxWait="20000" name="jdbc/vow4dash" password="vahan4@123" removeAbandoned="true" 
+		removeAbandonedTimeout="120" type="javax.sql.DataSource" url="jdbc:postgresql://10.249.163.111:5432/vow4" 
+		username="postgres"/> -->
+
+	<!-- usable -->
+
+<!-- 	<Resource auth="Container" driverClassName="org.postgresql.Driver" -->
+<!-- 	maxActive="50" maxIdle="10" maxWait="20000" name="jdbc/onlinepermit" -->
+<!-- 	password="olpt$545" removeAbandoned="true" removeAbandonedTimeout="120" -->
+<!-- 	type="javax.sql.DataSource" url="jdbc:postgresql://10.248.93.5:5432/srdl_velocis" -->
+<!-- 	username="onlinepermit_app" /> -->
+
+<!-- 	<Resource auth="Container" driverClassName="org.postgresql.Driver" -->
+<!-- 	maxActive="50" maxIdle="10" maxWait="20000" name="jdbc/vow4dash" -->
+<!-- 	password="olpt$545" removeAbandoned="true" removeAbandonedTimeout="120" -->
+<!-- 	type="javax.sql.DataSource" url="jdbc:postgresql://10.248.93.5:5432/srdl_velocis" -->
+<!-- 	username="onlinepermit_app" /> -->
+
+	<!-- <Resource username="vahan" -->
+	<!-- url="jdbc:postgresql://10.248.93.5:5432/srdl_velocis" type="javax.sql.DataSource" -->
+	<!-- removeAbandonedTimeout="120" removeAbandoned="true" password="vahan" -->
+	<!-- name="jdbc/vow4" maxWait="20000" maxIdle="10" maxActive="50" -->
+	<!-- driverClassName="org.postgresql.Driver" auth="Container" /> -->
+
+	<!-- <Resource username="vahan" -->
+	<!-- url="jdbc:postgresql://10.248.93.5:5432/srdl_velocis" type="javax.sql.DataSource" -->
+	<!-- removeAbandonedTimeout="120" removeAbandoned="true" password="vahan" -->
+	<!-- name="jdbc/vow4dash" maxWait="20000" maxIdle="10" maxActive="50" -->
+	<!-- driverClassName="org.postgresql.Driver" auth="Container" /> -->
+
+<!-- 	<Resource username="vahan" -->
+<!-- 		url="jdbc:postgresql://10.246.82.154:5432/srdl_velocis" type="javax.sql.DataSource" -->
+<!-- 		removeAbandonedTimeout="120" removeAbandoned="true" password="vahan" -->
+<!-- 		name="jdbc/vow4" maxWait="20000" maxIdle="10" maxActive="50" -->
+<!-- 		driverClassName="org.postgresql.Driver" auth="Container" /> -->
+
+<!-- 	<Resource username="vahan" -->
+<!-- 		url="jdbc:postgresql://10.246.82.154:5432/srdl_velocis" type="javax.sql.DataSource" -->
+<!-- 		removeAbandonedTimeout="120" removeAbandoned="true" password="vahan" -->
+<!-- 		name="jdbc/vow4dash" maxWait="20000" maxIdle="10" maxActive="50" -->
+<!-- 		driverClassName="org.postgresql.Driver" auth="Container" /> -->
+</Context>
