@@ -20,33 +20,103 @@ and open the template in the editor.
 <h:body>
 	<h:form>
 
-		<h:selectOneMenu id="state" value="#{loginBean.selectedState}">
+		<p:selectOneMenu id="state" value="#{loginBean.selectedState}">
 			<f:selectItem itemLabel="Select state" itemValue="" />
 			<f:selectItems value="#{loginBean.state_list}" var="item"
 				itemLabel="#{item.label}" itemValue="#{item.value}" />
 				<p:ajax event="change" execute="@this" render="servicedropdown" update="servicedropdown" listener="#{loginBean.getServicesList}" /> 
-        </h:selectOneMenu>
+        </p:selectOneMenu>
         <br/><br/>
-		<h:selectOneMenu id="servicedropdown" value="#{loginBean.selectedService}">
+		<p:selectOneMenu id="servicedropdown" value="#{loginBean.selectedService}">
 			<f:selectItem itemLabel="Select Service" itemValue="" />
 			<f:selectItems value="#{loginBean.service_list}" var="service"
 				itemLabel="#{service.label}" itemValue="#{service.value}" />
-		 <p:ajax event="change" execute="@this"  render="dynamicservicetable" update="dynamicservicetable" listener="#{loginBean.redirectToSelectedService}" /> 
-		</h:selectOneMenu>
+<!-- 		 <p:ajax event="change" execute="@this"  render="dynamicservicetable" update="dynamicservicetable" listener="#{loginBean.redirectToSelectedService}" />  -->
+		</p:selectOneMenu>
 		 <br/><br/>
-		 <h:dataTable value="#{loginBean.permitdobj}" var="permitDobj">
-        <h:column>
-            <f:facet name="PermitRelatedRTOside">Permit Related RTO Side</f:facet>
-            #{permitDobj.isServiceRto}
-        </h:column>
-        <h:column>
-            <f:facet name="PermitRelatedCitizenside">Permit Related Citizen Side</f:facet>
-            #{permitDobj.isServiceCitizen}
-        </h:column>
-        
-      </h:dataTable>
+
+		<p:commandButton value="showResult" action="#{loginBean.redirectToSelectedService}" update="dynamicservicetable citizenflowtable rtoflowtable" /> 	
+		<br/><br/>
+		 <p:dataTable style="#{loginBean.tableShow ? 'display:table;' : 'display:none;'}"  value="#{loginBean.permitdobj}" var="permitdobj" id="dynamicservicetable">
+            <f:facet name="header">
+            <p:outputLabel value="Configuration Details of #{loginBean.purposeDescr} of #{loginBean.selectedState}"/>
+            </f:facet>
+           
+                    <p:column headerText="Service Related to RTO">
+								<p:outputLabel value="#{permitdobj.serviceRto}" />
+							</p:column>
+							<p:column headerText="Service Related to Citizen">
+								<p:outputLabel value="#{permitdobj.serviceCitizen}" />
+							</p:column>
+							<p:column headerText="Aadhar authentication">
+								<p:outputLabel value="#{permitdobj.aadharAuthentication}" />
+							</p:column>
+							<p:column headerText="Document Upload">
+								<p:outputLabel value="#{permitdobj.uploadDocument}" />
+							</p:column>
+							<p:column headerText="Mobile Authentication">
+								<p:outputLabel value="#{permitdobj.via_registered_mobile}" />
+							</p:column>
+							<p:column headerText="Citizen Fee Exempt">
+							<p:outputLabel value="#{permitdobj.citizenFeeExempt}" />
+							</p:column>
+
+               </p:dataTable>
+               <br/><br/><br/>
+               <p:dataTable style="#{loginBean.tableShow ? 'display:table;' : 'display:none;'}"  value="#{loginBean.flowCitizen}" var="flowcitizen" id="citizenflowtable">
+            <f:facet name="header">
+            <p:outputLabel value="Citizen Side flow of #{loginBean.purposeDescr} of #{loginBean.selectedState}"/>
+            </f:facet>
+             <p:column headerText="flow_serial_no">
+								<p:outputLabel value="#{flowcitizen.flow_srno}" />
+							</p:column>
+							<p:column headerText="Action Code">
+								<p:outputLabel value="#{flowcitizen.action_cd}" />
+							</p:column>
+							<p:column headerText="Action Description">
+								<p:outputLabel value="#{flowcitizen.action_descr}" />
+							</p:column>
+							<p:column headerText="Is Backward">
+								<p:outputLabel value="#{flowcitizen.backward}" />
+							</p:column>
+							<p:column headerText="Conditon Formula Description">
+								<p:outputLabel value="#{flowcitizen.condition_formula}" />
+							</p:column>
+							<p:column headerText="Move to Vahan4">
+							<p:outputLabel value="#{flowcitizen.move_to_vahan4}" />
+							</p:column>
+
+               </p:dataTable>
+               
+               <br/><br/><br/>
+               <p:dataTable style="#{loginBean.tableShow ? 'display:table;' : 'display:none;'}"  value="#{loginBean.flowRto}" var="flowrto" id="rtoflowtable">
+            <f:facet name="header">
+            <p:outputLabel value="RTO Side flow of #{loginBean.purposeDescr} of #{loginBean.selectedState}"/>
+            </f:facet>
+             <p:column headerText="flow_serial_no">
+								<p:outputLabel value="#{flowrto.flow_srno}" />
+							</p:column>
+							<p:column headerText="Action Code">
+								<p:outputLabel value="#{flowrto.action_cd}" />
+							</p:column>
+							<p:column headerText="Action Description">
+								<p:outputLabel value="#{flowrto.action_descr}" />
+							</p:column>
+							<p:column headerText="Is Backward">
+								<p:outputLabel value="#{flowrto.backward}" />
+							</p:column>
+							<p:column headerText="Conditon Formula Description">
+								<p:outputLabel value="#{flowrto.condition_formula}" />
+							</p:column>
+							
+
+               </p:dataTable>
+               
+               
 		
+               
 		
+	
 		
 		
 </h:form>

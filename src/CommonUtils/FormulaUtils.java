@@ -299,7 +299,8 @@ public class FormulaUtils {
 					tmgr.release();
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());			}
+				//System.out.println(e.getMessage());			
+				}
 		}
 		return status;
 	}
@@ -324,7 +325,7 @@ public class FormulaUtils {
 					tmgr.release();
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				//System.out.println(e.getMessage());
 			}
 		}
 		return status;
@@ -588,7 +589,7 @@ public class FormulaUtils {
 					retString = retString.replace(key.toString(), retObj.toString().toUpperCase());
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				//System.out.println(e.getMessage());
 			}
 		}
 		return retString;

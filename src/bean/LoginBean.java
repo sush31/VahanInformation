@@ -13,17 +13,20 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import javax.sql.RowSet;
 
+import CommonUtils.FillMapUtility;
 import databaseconnection.TableConstants;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManager;
+import dobj.CitizenServiceFlowDobj;
 import dobj.PermitDobj;
+import dobj.RtoServiceFlowDobj;
 import impl.PermitImpl;
 
 import javax.faces.model.SelectItem;
 
 @ManagedBean(name = "loginBean")
 @SessionScoped
-public class LoginBean implements Serializable{
+public class LoginBean implements Serializable {
 	/**
 	 * 
 	 */
@@ -31,18 +34,26 @@ public class LoginBean implements Serializable{
 	private HttpSession session = null;
 	private List<SelectItem> state_list;
 	private List<SelectItem> service_list;
-	private  String selectedState;
-	private  String selectedService;
+	private String selectedState;
+	private String selectedService;
+	private String purposeDescr;
+	public PermitDobj permitdobj = new PermitDobj();
+	public CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
+	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
+	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
+	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
+	public boolean tableShow;
 
 	@PostConstruct
 	public void init() {
 
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		state_list = getStateList();
-		//session.setAttribute("state", selectedState);
+
+		// session.setAttribute("state", selectedState);
 	}
 
-	public  List<SelectItem> getStateList() {
+	public List<SelectItem> getStateList() {
 		state_list = new ArrayList<>();
 		TransactionManager tmgr;
 		String Sql = "Select state_code,descr from " + TableList.TM_STATE;
@@ -64,18 +75,19 @@ public class LoginBean implements Serializable{
 		return state_list;
 	}
 
-   public List<SelectItem> getServicesList(javax.faces.event.AjaxBehaviorEvent event) {
-	    session.setAttribute("state", selectedState);
+	public List<SelectItem> getServicesList(javax.faces.event.AjaxBehaviorEvent event) {
+		session.setAttribute("state", selectedState);
 		service_list = new ArrayList<>();
-		TransactionManager tmgr=null;
-		String sql = "select distinct tmf.pur_cd,tp.descr from "+ TableList.TM_PURPOSE_ACTION_FLOW +" tmf inner join "+ TableList.TM_PURPOSE_MAST+" tp"
+		TransactionManager tmgr = null;
+		String sql = "select distinct tmf.pur_cd,tp.descr from " + TableList.TM_PURPOSE_ACTION_FLOW + " tmf inner join "
+				+ TableList.TM_PURPOSE_MAST + " tp"
 				+ " on tmf.pur_cd=tp.pur_cd  where state_cd=? group by tmf.pur_cd,tp.descr order by pur_cd";
 		PreparedStatement ps;
 		RowSet rs;
 		try {
 			tmgr = new TransactionManager("fetch services list");
 			ps = tmgr.prepareStatement(sql);
-			ps.setString(1,selectedState);
+			ps.setString(1, selectedState);
 			rs = tmgr.fetchDetachedRowSet_No_release();
 			while (rs.next()) {
 				service_list.add(new SelectItem(rs.getString("pur_cd"), rs.getString("descr")));
@@ -85,33 +97,56 @@ public class LoginBean implements Serializable{
 
 		} catch (Exception e) {
 			System.out.println(e);
-		}
-		finally
-		{
+		} finally {
 			try {
 				if (tmgr != null) {
 					tmgr.release();
 				}
 			} catch (Exception ee) {
-				System.out.println(ee);
+
 			}
 		}
-       return service_list;
-	}
-   
-   public void redirectToSelectedService()
-	{
-		//System.out.println(selectedService);
-	  int purCd=(Integer.parseInt(selectedService));
-	  if(purCd==TableConstants.VM_PMT_FRESH_PUR_CD)
-	  {
-		  PermitDobj permitdobj= new PermitDobj();
-		  permitdobj=new PermitImpl().getPermitServiceAttributes(selectedState,purCd);
-	  }
-		
+		return service_list;
 	}
 
-	
+	public void redirectToSelectedService() {
+		// ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
+		if (selectedService != null) {
+			tableShow = true;
+			purposeDescr = FillMapUtility.getPurposeDescr(Integer.parseInt(selectedService));
+
+		} else {
+			tableShow = false;
+		}
+		int purCd = (Integer.parseInt(selectedService));
+		if (purCd == TableConstants.VM_PMT_FRESH_PUR_CD || purCd == TableConstants.VM_PMT_APPLICATION_PUR_CD
+				|| purCd == TableConstants.VM_PMT_RENEWAL_PUR_CD || purCd == TableConstants.VM_PMT_TRANSFER_PUR_CD
+				|| purCd == TableConstants.VM_PMT_TRANSFER_DEATH_CASE_PUR_CD
+				|| purCd == TableConstants.VM_PMT_VARIATION_ENDORSEMENT_PUR_CD
+				|| purCd == TableConstants.VM_PMT_CA_PUR_CD || purCd == TableConstants.VM_PMT_CANCELATION_PUR_CD
+				|| purCd == TableConstants.VM_PMT_DUPLICATE_PUR_CD || purCd == TableConstants.VM_PMT_TEMP_PUR_CD
+				|| purCd == TableConstants.VM_PMT_SPECIAL_PUR_CD
+				|| purCd == TableConstants.VM_PMT_TRANSFER_DEATH_CASE_PUR_CD
+				|| purCd == TableConstants.VM_PMT_HOME_AUTH_PERMIT_PUR_CD
+				|| purCd == TableConstants.VM_PMT_COUNTER_SIGNATURE_AFTER_AUTH
+				|| purCd == TableConstants.VM_PMT_AUTH_COUNTER_SIGNATURE_PUR_CD
+				|| purCd == TableConstants.VM_PMT_RENEWAL_HOME_AUTH_PERMIT_PUR_CD
+				|| purCd == TableConstants.VM_PMT_SURRENDER_PUR_CD || purCd == TableConstants.VM_PMT_RESTORE_PUR_CD
+				|| purCd == TableConstants.VM_PMT_REPLACE_VEH_PUR_CD) {
+			permitdobj = new PermitImpl().getPermitServiceAttributes(selectedState, purCd, permitdobj);
+			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+		}
+
+	}
+
+	public ArrayList<CitizenServiceFlowDobj> getFlowCitizen() {
+		return flowCitizen;
+	}
+
+	public void setFlowCitizen(ArrayList<CitizenServiceFlowDobj> flowCitizen) {
+		this.flowCitizen = flowCitizen;
+	}
 
 	public List<SelectItem> getState_list() {
 		return state_list;
@@ -144,8 +179,53 @@ public class LoginBean implements Serializable{
 	public void setSelectedService(String selectedService) {
 		this.selectedService = selectedService;
 	}
-	
-	
-	
+
+	public PermitDobj getPermitdobj() {
+		return permitdobj;
+	}
+
+	public void setPermitdobj(PermitDobj permitdobj) {
+		this.permitdobj = permitdobj;
+	}
+
+	public boolean isTableShow() {
+		return tableShow;
+	}
+
+	public void setTableShow(boolean tableShow) {
+		this.tableShow = tableShow;
+	}
+
+	public String getPurposeDescr() {
+		return purposeDescr;
+	}
+
+	public void setPurposeDescr(String purposeDescr) {
+		this.purposeDescr = purposeDescr;
+	}
+
+	public CitizenServiceFlowDobj getCitizenFlow() {
+		return citizenFlow;
+	}
+
+	public void setCitizenFlow(CitizenServiceFlowDobj citizenFlow) {
+		this.citizenFlow = citizenFlow;
+	}
+
+	public RtoServiceFlowDobj getRtoFlowdobj() {
+		return rtoFlowdobj;
+	}
+
+	public void setRtoFlowdobj(RtoServiceFlowDobj rtoFlowdobj) {
+		this.rtoFlowdobj = rtoFlowdobj;
+	}
+
+	public ArrayList<RtoServiceFlowDobj> getFlowRto() {
+		return flowRto;
+	}
+
+	public void setFlowRto(ArrayList<RtoServiceFlowDobj> flowRto) {
+		this.flowRto = flowRto;
+	}
 
 }
