@@ -208,6 +208,7 @@ abstract public class TableList implements Serializable {
 	public static final String VA_DOCUMENT_DSIGN = "vahan4.va_document_digital_signed";
 	public static final String VH_DOCUMENT_DSIGN = "vahan4.vh_document_digital_signed";
 	public static final String TM_CONFIGURATION_DIGITAL_SIGNED = "tm_configuration_digital_signed";
+	public static final String TM_CONFIGURATION_DMS = "tm_configuration_dms";
 
 	// NAMAN INSERT THE TABLE
 	public static final String VT_INSTRUMENTS = "VT_INSTRUMENTS";

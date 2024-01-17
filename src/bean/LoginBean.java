@@ -18,6 +18,7 @@ import databaseconnection.TableConstants;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManager;
 import dobj.CitizenServiceFlowDobj;
+import dobj.NewRegistrationDobj;
 import dobj.PermitDobj;
 import dobj.RtoServiceFlowDobj;
 import impl.PermitImpl;
@@ -38,6 +39,7 @@ public class LoginBean implements Serializable {
 	private String selectedService;
 	private String purposeDescr;
 	public PermitDobj permitdobj = new PermitDobj();
+	public NewRegistrationDobj newRegDobj=new NewRegistrationDobj();
 	public CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
 	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
@@ -49,8 +51,7 @@ public class LoginBean implements Serializable {
 
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		state_list = getStateList();
-
-		// session.setAttribute("state", selectedState);
+        session.setAttribute("state", selectedState);
 	}
 
 	public List<SelectItem> getStateList() {
@@ -112,6 +113,7 @@ public class LoginBean implements Serializable {
 	public void redirectToSelectedService() {
 		// ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 		if (selectedService != null) {
+			session.setAttribute("purcd", selectedService);
 			tableShow = true;
 			purposeDescr = FillMapUtility.getPurposeDescr(Integer.parseInt(selectedService));
 
@@ -136,6 +138,11 @@ public class LoginBean implements Serializable {
 			permitdobj = new PermitImpl().getPermitServiceAttributes(selectedState, purCd, permitdobj);
 			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+		}
+		else if(purCd==TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE)
+		{
+			
+			
 		}
 
 	}

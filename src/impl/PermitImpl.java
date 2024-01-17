@@ -63,7 +63,7 @@ public class PermitImpl {
 
 						boolean aadharAuth = FormulaUtils
 								.isCondition(FormulaUtils.replaceTagPermitValues(enab_faceless, parameter));
-						if (containsOnly61(enab_faceless) == true) {
+						if (FillMapUtility.containsOnly61(enab_faceless) == true) {
 
 							aadharAuthentication = aadharAuth ? "true" : "false";
 
@@ -71,7 +71,7 @@ public class PermitImpl {
 							if (aadharAuth == true)
 								aadharAuthentication = "true";
 							else {
-								aadharAuthentication = interpretExpression(enab_faceless);
+								aadharAuthentication = FillMapUtility.interpretExpression(enab_faceless);
 							}
 						}
 
@@ -81,14 +81,14 @@ public class PermitImpl {
 						uploadDoc = rs.getString("upload_doc_condition");
 						uploadDocument = FormulaUtils.isCondition(
 								FormulaUtils.replaceTagPermitValues(rs.getString("upload_doc_condition"), parameter));
-						if (containsOnly61(uploadDoc) == true) {
+						if (FillMapUtility.containsOnly61(uploadDoc) == true) {
 							uploadDoc = uploadDocument ? "true" : "false";
 
 						} else {
 							if (uploadDocument == true)
 								uploadDoc = "true";
 							else {
-								uploadDoc = interpretExpression(uploadDoc);
+								uploadDoc = FillMapUtility.interpretExpression(uploadDoc);
 							}
 						}
 					} else {
@@ -96,8 +96,8 @@ public class PermitImpl {
 					}
 					permitdobj.setUploadDocument(uploadDoc);
 					permitdobj.setAadharAuthentication(aadharAuthentication);
-					permitdobj.setServiceCitizen(isServiceRto(stateCd, purCd));
-					permitdobj.setServiceRto(isServiceCitizen(stateCd, purCd));
+					permitdobj.setServiceCitizen(isServiceCitizen(stateCd, purCd));
+					permitdobj.setServiceRto(isServiceRto(stateCd, purCd));
 					String noFeePurpose = rs.getString("no_fee_purpose");
 					if (noFeePurpose.equalsIgnoreCase("false")) {
 						noFeeCitizen = "false";
@@ -105,14 +105,14 @@ public class PermitImpl {
 						boolean noFee = FormulaUtils.isCondition(
 								FormulaUtils.replaceTagPermitValues(rs.getString("no_fee_purpose"), parameter));
 
-						if (containsOnly61(rs.getString("no_fee_purpose"))) {
+						if (FillMapUtility.containsOnly61(rs.getString("no_fee_purpose"))) {
 
 							noFeeCitizen = noFee ? "true" : "false";
 						} else {
 							if (noFee) {
 								noFeeCitizen = "true";
 							} else {
-								noFeeCitizen = interpretExpression(rs.getString("no_fee_purpose"));
+								noFeeCitizen = FillMapUtility.interpretExpression(rs.getString("no_fee_purpose"));
 							}
 						}
 						permitdobj.setCitizenFeeExempt(noFeeCitizen);
@@ -140,86 +140,7 @@ public class PermitImpl {
 	}
 
 	
-
-	public String interpretExpression(String expression) {
-		Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
-		vmtaxslabfieldsmap = FillMapUtility.getCodeDescr();
-		Map<String, String> codeMeanings = new LinkedHashMap<String, String>();
-		StringBuffer result = new StringBuffer();
-		expression = expression.trim();
-		Map<String, Map<String, String>> contextAwareCodeMeanings = fetchContextAwareCodeMeaningsFromDatabase();
-		String patternString = "<(\\d+)>|(\\b\\d+\\b)";
-		Pattern pattern = Pattern.compile(patternString);
-		Matcher matcher = pattern.matcher(expression);
-		while (matcher.find()) {
-			String code = matcher.group(); // Check if the code inside angle
-											// brackets is present
-			if (code.startsWith("<")) {
-
-				codeMeanings = contextAwareCodeMeanings.get(code);
-				String contextreplacement = (String) vmtaxslabfieldsmap.getOrDefault(code,code);
-				matcher.appendReplacement(result, Matcher.quoteReplacement(contextreplacement));
-
-			} else {
-
-				String replacement = (String) codeMeanings.getOrDefault(code, code);
-				matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
-				
-			}
-		}
-		matcher.appendTail(result);
-		System.out.println(result);
-		return result.toString();
-		
-
-	}
-
-	private Map<String, Map<String, String>> fetchContextAwareCodeMeaningsFromDatabase() {
-		Map<String, Map<String, String>> contextAwareCodeMeanings = new HashMap<>();
-		contextAwareCodeMeanings.put("<61>", FillMapUtility.fillPurposeCodeMap());
-		contextAwareCodeMeanings.put("<25>", FillMapUtility.fillPmtTypeMap());
-		contextAwareCodeMeanings.put("<33>", FillMapUtility.fillVehicleClassMap());
-		
-
-		return contextAwareCodeMeanings;
-	}
-
-	public String getConditionFormulaDescription(String input) {
-
-		String input1 = input.trim();
-		TagFieldMap = FillMapUtility.fillMap();
-		Pattern pattern = Pattern.compile("<\\d+>|\\b\\d+\\b");
-		Matcher matcher = pattern.matcher(input1);
-		StringBuffer result = new StringBuffer();
-		while (matcher.find()) {
-			String value = matcher.group();
-			String replacement = (String) TagFieldMap.getOrDefault(value, value);
-			matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
-		}
-		matcher.appendTail(result);
-
-		return result.toString();
-	}
-
-	public boolean containsOnly61(String input) {
-		// Define a regular expression pattern to match <61>
-		// String patternString =
-		// "<61>\\s+IN\\s*\\(\\d+(,\\s*\\d+)*\\)\\s*OR\\s*\\(.*\\)";
-		String patternString = "<33>|<25>|<20>";
-		Pattern pattern = Pattern.compile(patternString);
-
-		// Create a matcher with the input string
-		Matcher matcher = pattern.matcher(input);
-
-		// Check if the pattern is found in the input
-		if (matcher.find()) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	public boolean isServiceRto(String stateCd, int purCd)
+public boolean isServiceRto(String stateCd, int purCd)
 
 	{
 		TransactionManagerReadOnly tmgr = null;
@@ -315,7 +236,7 @@ public class PermitImpl {
 				if (rs.getString("condition_formula").equalsIgnoreCase("true")) {
 					dobj.setCondition_formula(rs.getString("condition_formula"));
 				} else {
-					dobj.setCondition_formula(getConditionFormulaDescription(rs.getString("condition_formula")));
+					dobj.setCondition_formula(FillMapUtility.interpretExpression(rs.getString("condition_formula")));
 				}
 				dobj.setMove_to_vahan4(rs.getBoolean("move_to_vahan4"));
 				dobj.setAction_descr(rs.getString("action_descr"));
@@ -363,7 +284,7 @@ public class PermitImpl {
 				if (rs.getString("condition_formula").equalsIgnoreCase("true")) {
 					dobjRto.setCondition_formula(rs.getString("condition_formula"));
 				} else {
-					dobjRto.setCondition_formula(getConditionFormulaDescription(rs.getString("condition_formula")));
+					dobjRto.setCondition_formula(FillMapUtility.interpretExpression(rs.getString("condition_formula")));
 				}
 				dobjRto.setAction_descr(FillMapUtility.getActionDescr(rs.getInt("action_cd")));
 				flowRto.add(dobjRto);
