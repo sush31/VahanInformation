@@ -100,14 +100,14 @@ public class FillMapUtility {
 		RowSet rs = null;
 		String sql, sql1 = null;
 		String descr = "";
-		sql = "select owcode,descr " + TableList.VM_OWCODE;
+		sql = "select ow_code,descr from " + TableList.VM_OWCODE;
 
 		try {
 			tmgr = new TransactionManagerReadOnly("get code description");
 			ps = tmgr.prepareStatement(sql);
 			rs = tmgr.fetchDetachedRowSet();
 			while (rs.next()) {
-				ownerTypeMap.put(String.valueOf(rs.getInt("owcode")), rs.getString("descr"));
+				ownerTypeMap.put(String.valueOf(rs.getInt("ow_code")), rs.getString("descr"));
 			}
 
 		}
@@ -136,14 +136,14 @@ public class FillMapUtility {
 		RowSet rs = null;
 		String sql, sql1 = null;
 		String descr = "";
-		sql = "select regn_typecode,descr " + TableList.VM_REGN_TYPE;
+		sql = "select regn_typecode,descr from " + TableList.VM_REGN_TYPE;
 
 		try {
 			tmgr = new TransactionManagerReadOnly("get registration type description");
 			ps = tmgr.prepareStatement(sql);
 			rs = tmgr.fetchDetachedRowSet();
 			while (rs.next()) {
-				regnTypeMap.put(String.valueOf(rs.getInt("regn_typecode")), rs.getString("descr"));
+				regnTypeMap.put(String.valueOf(rs.getString("regn_typecode")), rs.getString("descr"));
 			}
 
 		}
@@ -251,7 +251,7 @@ public class FillMapUtility {
 			ps.setString(1, (String) session.getAttribute("state"));
 			rs = tmgr.fetchDetachedRowSet();
 			while (rs.next()) {
-				officedescr.put(rs.getString("code"), rs.getString("descr"));
+				officedescr.put(rs.getString("off_cd"), rs.getString("off_name"));
 			}
 
 		}
@@ -333,7 +333,7 @@ public class FillMapUtility {
 			tmgr = new TransactionManagerReadOnly("fuel description");
 			PreparedStatement prstmt = tmgr.prepareStatement(sqlTmActionSQL);
 			RowSet rs = tmgr.fetchDetachedRowSet();
-			if (rs.next()) {
+			while (rs.next()) {
 				fuelDescr.put(String.valueOf(rs.getInt("code")), rs.getString("descr"));
 			}
 		} catch (Exception ex) {
@@ -385,7 +385,7 @@ public class FillMapUtility {
 		// Define a regular expression pattern to match <61>
 		// String patternString =
 		// "<61>\\s+IN\\s*\\(\\d+(,\\s*\\d+)*\\)\\s*OR\\s*\\(.*\\)";
-		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28>|";
+		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28>";
 		Pattern pattern = Pattern.compile(patternString);
 
 		// Create a matcher with the input string

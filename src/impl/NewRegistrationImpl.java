@@ -1,6 +1,7 @@
 package impl;
 
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -16,13 +17,11 @@ import dobj.NewRegistrationDobj;
 public class NewRegistrationImpl {
 
 	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-	int purCd = (Integer) session.getAttribute("purcd");
+	int purCd = Integer.parseInt((String) session.getAttribute("purcd"));
 
 	public NewRegistrationDobj getNewRegistrationAttributes(String stateCd, NewRegistrationDobj newRegndobj) {
 
 		String zeroFees;
-		boolean uploadDocument;
-		String uploadDoc;
 		TransactionManagerReadOnly tmgr = null;
 		PreparedStatement ps = null;
 		RowSet rs = null;
@@ -54,7 +53,12 @@ public class NewRegistrationImpl {
 					}
 				}
 				newRegndobj.setFeeExempt(zeroFees);
+				newRegndobj.setTaxExempt(tax_exemption);
 				newRegndobj.setUploadDocument(getDocumentUpload(stateCd));
+				newRegndobj.setFeesApplicable(getFeesApplicableForNewRegn(stateCd));
+				newRegndobj.setMobileAuthentication(getMobileAuthentication(stateCd));
+				newRegndobj.setServiceRto(new PermitImpl().isServiceRto(stateCd, purCd));
+				newRegndobj.setServiceCitizen(new PermitImpl().isServiceRto(stateCd, purCd));
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -109,5 +113,89 @@ public class NewRegistrationImpl {
 		return uploadDocument;
 
 	}
+	public ArrayList<String> getFeesApplicableForNewRegn(String stateCd)
+	{
+		ArrayList<String> feesApplicable=new ArrayList<String>();
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select pur_cd,descr " + TableList.VC_ACTION_PURPOSE_MAP + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch dms");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
 
+				feesApplicable.add(rs.getString("descr"));
+
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return feesApplicable;
+	}
+	
+	public String getMobileAuthentication(String stateCd)
+	{
+		String mobileauth="false";
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select owner_mobile_verify_with_otp " + TableList.TM_CONFIGURATION_OTP + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch mobile OTP verification");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+
+				if((rs.getString("owner_mobile_verify_with_otp")).equalsIgnoreCase("true"))
+				{
+					mobileauth="true";
+				}
+				else if(rs.getString("owner_mobile_verify_with_otp").equalsIgnoreCase("true"))
+				{
+					mobileauth="false";
+				}
+				else
+				{
+					mobileauth=FillMapUtility.interpretExpression(rs.getString("owner_mobile_verify_with_otp"));
+				}
+
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return mobileauth;
+		
+	}
+	
+	
+
+	
+	
+	
 }

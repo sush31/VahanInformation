@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public class NewRegistrationDobj {
 
-	private boolean serviceRto;
-	private boolean serviceCitizen;
-	private ArrayList<String> feesApplicable;
-	private String feeExempt;
-	private String taxExempt;
-	private boolean uploadDocument;
-	private boolean mobileAuthentication;
+	public boolean serviceRto;
+	public boolean serviceCitizen;
+	public ArrayList<String> feesApplicable;
+	public String feeExempt;
+	public String taxExempt;
+	public boolean uploadDocument;
+	public String mobileAuthentication;
 	
 	public NewRegistrationDobj()
 	{
@@ -66,11 +66,11 @@ public class NewRegistrationDobj {
 		this.uploadDocument = uploadDocument;
 	}
 
-	public boolean isMobileAuthentication() {
+	public String isMobileAuthentication() {
 		return mobileAuthentication;
 	}
 
-	public void setMobileAuthentication(boolean mobileAuthentication) {
+	public void setMobileAuthentication(String mobileAuthentication) {
 		this.mobileAuthentication = mobileAuthentication;
 	}
 
@@ -79,6 +79,8 @@ public class NewRegistrationDobj {
 	}
 	
 	
-	
+	public String getMobileAuthentication() {
+		return mobileAuthentication;
+	}
 	
 }

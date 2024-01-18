@@ -21,6 +21,7 @@ import dobj.CitizenServiceFlowDobj;
 import dobj.NewRegistrationDobj;
 import dobj.PermitDobj;
 import dobj.RtoServiceFlowDobj;
+import impl.NewRegistrationImpl;
 import impl.PermitImpl;
 
 import javax.faces.model.SelectItem;
@@ -39,12 +40,16 @@ public class LoginBean implements Serializable {
 	private String selectedService;
 	private String purposeDescr;
 	public PermitDobj permitdobj = new PermitDobj();
-	public NewRegistrationDobj newRegDobj=new NewRegistrationDobj();
+	public  NewRegistrationDobj newregndobj= new NewRegistrationDobj();
 	public CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
 	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
-	public boolean tableShow;
+	public boolean tableShowPermit=false;
+	public boolean tableShow=false;
+	public boolean renderNewRegn=false;
+
+	
 
 	@PostConstruct
 	public void init() {
@@ -111,10 +116,10 @@ public class LoginBean implements Serializable {
 	}
 
 	public void redirectToSelectedService() {
-		// ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
+		 
 		if (selectedService != null) {
+			tableShow=true;
 			session.setAttribute("purcd", selectedService);
-			tableShow = true;
 			purposeDescr = FillMapUtility.getPurposeDescr(Integer.parseInt(selectedService));
 
 		} else {
@@ -135,6 +140,7 @@ public class LoginBean implements Serializable {
 				|| purCd == TableConstants.VM_PMT_RENEWAL_HOME_AUTH_PERMIT_PUR_CD
 				|| purCd == TableConstants.VM_PMT_SURRENDER_PUR_CD || purCd == TableConstants.VM_PMT_RESTORE_PUR_CD
 				|| purCd == TableConstants.VM_PMT_REPLACE_VEH_PUR_CD) {
+			tableShowPermit = true;
 			permitdobj = new PermitImpl().getPermitServiceAttributes(selectedState, purCd, permitdobj);
 			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
@@ -142,7 +148,9 @@ public class LoginBean implements Serializable {
 		else if(purCd==TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE)
 		{
 			
-			
+			newregndobj=new NewRegistrationImpl().getNewRegistrationAttributes(selectedState,newregndobj);
+			renderNewRegn=true;
+			tableShowPermit=false;
 		}
 
 	}
@@ -194,6 +202,9 @@ public class LoginBean implements Serializable {
 	public void setPermitdobj(PermitDobj permitdobj) {
 		this.permitdobj = permitdobj;
 	}
+	
+
+	
 
 	public boolean isTableShow() {
 		return tableShow;
@@ -201,6 +212,14 @@ public class LoginBean implements Serializable {
 
 	public void setTableShow(boolean tableShow) {
 		this.tableShow = tableShow;
+	}
+
+	public boolean isTableShowPermit() {
+		return tableShowPermit;
+	}
+
+	public void setTableShowPermit(boolean tableShowPermit) {
+		this.tableShowPermit = tableShowPermit;
 	}
 
 	public String getPurposeDescr() {
@@ -234,5 +253,21 @@ public class LoginBean implements Serializable {
 	public void setFlowRto(ArrayList<RtoServiceFlowDobj> flowRto) {
 		this.flowRto = flowRto;
 	}
+
+	public NewRegistrationDobj getNewregndobj() {
+		return newregndobj;
+	}
+
+	public void setNewregndobj(NewRegistrationDobj newregndobj) {
+		this.newregndobj = newregndobj;
+	}
+	public boolean isRenderNewRegn() {
+		return renderNewRegn;
+	}
+
+	public void setRenderNewRegn(boolean renderNewRegn) {
+		this.renderNewRegn = renderNewRegn;
+	}
+	
 
 }
