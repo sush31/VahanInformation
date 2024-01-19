@@ -1,16 +1,17 @@
 package dobj;
 
-import java.util.ArrayList;
+import java.util.Map;
 
 public class NewRegistrationDobj {
 
 	public boolean serviceRto;
 	public boolean serviceCitizen;
-	public ArrayList<String> feesApplicable;
+	public String feesApplicableCondition;
 	public String feeExempt;
 	public String taxExempt;
 	public boolean uploadDocument;
 	public String mobileAuthentication;
+	public Map<String,String> feesApplicable;
 	
 	public NewRegistrationDobj()
 	{
@@ -33,14 +34,15 @@ public class NewRegistrationDobj {
 		this.serviceCitizen = serviceCitizen;
 	}
 
-	public ArrayList<String> getFeesApplicable() {
+
+
+	public Map<String, String> getFeesApplicable() {
 		return feesApplicable;
 	}
 
-	public void setFeesApplicable(ArrayList<String> feesApplicable) {
+	public void setFeesApplicable(Map<String, String> feesApplicable) {
 		this.feesApplicable = feesApplicable;
 	}
-
 
 	public String getFeeExempt() {
 		return feeExempt;
@@ -82,5 +84,15 @@ public class NewRegistrationDobj {
 	public String getMobileAuthentication() {
 		return mobileAuthentication;
 	}
+
+	public String getFeesApplicableCondition() {
+		return feesApplicableCondition;
+	}
+
+	public void setFeesApplicableCondition(String feesApplicableCondition) {
+		this.feesApplicableCondition = feesApplicableCondition;
+	}
+	
+	
 	
 }

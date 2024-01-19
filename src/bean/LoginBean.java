@@ -40,23 +40,20 @@ public class LoginBean implements Serializable {
 	private String selectedService;
 	private String purposeDescr;
 	public PermitDobj permitdobj = new PermitDobj();
-	public  NewRegistrationDobj newregndobj= new NewRegistrationDobj();
+	public NewRegistrationDobj newregndobj = new NewRegistrationDobj();
 	public CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
 	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
-	public boolean tableShowPermit=false;
-	public boolean tableShow=false;
-	public boolean renderNewRegn=false;
-
-	
+	public boolean tableShowPermit = false;
+	public boolean tableShow = false;
 
 	@PostConstruct
 	public void init() {
 
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		state_list = getStateList();
-        session.setAttribute("state", selectedState);
+		session.setAttribute("state", selectedState);
 	}
 
 	public List<SelectItem> getStateList() {
@@ -116,9 +113,9 @@ public class LoginBean implements Serializable {
 	}
 
 	public void redirectToSelectedService() {
-		 
+
 		if (selectedService != null) {
-			tableShow=true;
+			tableShow = true;
 			session.setAttribute("purcd", selectedService);
 			purposeDescr = FillMapUtility.getPurposeDescr(Integer.parseInt(selectedService));
 
@@ -144,14 +141,28 @@ public class LoginBean implements Serializable {
 			permitdobj = new PermitImpl().getPermitServiceAttributes(selectedState, purCd, permitdobj);
 			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE) {
+
+			newregndobj = new NewRegistrationImpl().getNewRegistrationAttributes(selectedState, newregndobj);
+			tableShowPermit = false;
+			redirectToTargetPage(purCd);
+
 		}
-		else if(purCd==TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE)
-		{
-			
-			newregndobj=new NewRegistrationImpl().getNewRegistrationAttributes(selectedState,newregndobj);
-			renderNewRegn=true;
-			tableShowPermit=false;
+
+	}
+
+	private String redirectToTargetPage(int purCd) {
+       String outcome="";
+		switch (purCd) {
+		case TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE:
+			outcome= "redirectToNewregistration";
+			break;
+
+		default:
+			outcome= "homepage";
+
 		}
+		return outcome;
 
 	}
 
@@ -202,9 +213,6 @@ public class LoginBean implements Serializable {
 	public void setPermitdobj(PermitDobj permitdobj) {
 		this.permitdobj = permitdobj;
 	}
-	
-
-	
 
 	public boolean isTableShow() {
 		return tableShow;
@@ -261,13 +269,5 @@ public class LoginBean implements Serializable {
 	public void setNewregndobj(NewRegistrationDobj newregndobj) {
 		this.newregndobj = newregndobj;
 	}
-	public boolean isRenderNewRegn() {
-		return renderNewRegn;
-	}
-
-	public void setRenderNewRegn(boolean renderNewRegn) {
-		this.renderNewRegn = renderNewRegn;
-	}
-	
 
 }

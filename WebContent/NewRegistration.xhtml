@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<!--<h:head>-->
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</h:head>
+<h:body>
+	<h:form>
+	
+               <p:dataTable  value="#{loginBean.newregndobj}" var="newregndobj" id="newregntable">
+            <f:facet name="header">
+            <p:outputLabel value="Configuration Details of #{loginBean.purposeDescr} of #{loginBean.selectedState}"/>
+            </f:facet>
+           
+                    <p:column headerText="Service Related to RTO">
+								<p:outputLabel value="#{newregndobj.serviceRto}" />
+							</p:column>
+							<p:column headerText="Service Related to Citizen">
+								<p:outputLabel value="#{newregndobj.serviceCitizen}" />
+							</p:column>
+							<p:column headerText="Fees Applicable">
+								<p:outputLabel value="#{newregndobj.feesApplicable}" />
+							</p:column>
+<!-- 							<p:column headerText="Fees Applicable condition"> -->
+<!-- 								<p:outputLabel value="#{newregndobj.feesApplicableCondition}" /> -->
+<!-- 							</p:column> -->
+							<p:column headerText="Document Upload">
+								<p:outputLabel value="#{newregndobj.uploadDocument}" />
+							</p:column>
+							<p:column headerText="Mobile Authentication">
+								<p:outputLabel value="#{newregndobj.mobileAuthentication}" />
+							</p:column>
+							<p:column headerText="Fee Exempt">
+							<p:outputLabel value="#{newregndobj.feeExempt}" />
+							</p:column>
+							<p:column headerText="Tax Exempt Condition">
+							<p:outputLabel value="#{newregndobj.taxExempt}" />
+							</p:column>
+
+               </p:dataTable>
+               </h:form>
+               </h:body>
+               </html>
+               
+	

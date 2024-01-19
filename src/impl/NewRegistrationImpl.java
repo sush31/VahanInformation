@@ -2,6 +2,8 @@ package impl;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -58,7 +60,7 @@ public class NewRegistrationImpl {
 				newRegndobj.setFeesApplicable(getFeesApplicableForNewRegn(stateCd));
 				newRegndobj.setMobileAuthentication(getMobileAuthentication(stateCd));
 				newRegndobj.setServiceRto(new PermitImpl().isServiceRto(stateCd, purCd));
-				newRegndobj.setServiceCitizen(new PermitImpl().isServiceRto(stateCd, purCd));
+				newRegndobj.setServiceCitizen(new PermitImpl().isServiceCitizen(stateCd, purCd));
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -83,7 +85,7 @@ public class NewRegistrationImpl {
 		PreparedStatement ps = null;
 		RowSet rs = null;
 		String sql = null;
-		sql = "select is_doc_upload,pur_cd  " + TableList.TM_CONFIGURATION_DMS + " where state_cd=?";
+		sql = "select is_doc_upload,pur_cd  from  " + TableList.TM_CONFIGURATION_DMS + " where state_cd=?";
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch dms");
 			ps = tmgr.prepareStatement(sql);
@@ -113,14 +115,17 @@ public class NewRegistrationImpl {
 		return uploadDocument;
 
 	}
-	public ArrayList<String> getFeesApplicableForNewRegn(String stateCd)
-	{
-		ArrayList<String> feesApplicable=new ArrayList<String>();
+
+	public Map<String,String> getFeesApplicableForNewRegn(String stateCd) {
+		Map<String, String> feesApplicable = new LinkedHashMap<String, String>();
 		TransactionManagerReadOnly tmgr = null;
 		PreparedStatement ps = null;
 		RowSet rs = null;
 		String sql = null;
-		sql = "select pur_cd,descr " + TableList.VC_ACTION_PURPOSE_MAP + " where state_cd=?";
+		VehicleParameters parameter = new VehicleParameters();
+		parameter.setPUR_CD(1);
+		sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+				+ " where state_cd=? and action='NEW'";
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch dms");
 			ps = tmgr.prepareStatement(sql);
@@ -128,7 +133,22 @@ public class NewRegistrationImpl {
 			rs = tmgr.fetchDetachedRowSet();
 			while (rs.next()) {
 
-				feesApplicable.add(rs.getString("descr"));
+				feesApplicable.put("feepurpose", FillMapUtility.getPurposeDescr(rs.getInt("pur_cd")));
+				String condition = rs.getString("condition_formula");
+				if (condition.equalsIgnoreCase("true")) {
+					feesApplicable.put("condition", condition);
+				} else {
+					boolean con = FormulaUtils.isCondition(
+							FormulaUtils.replaceTagPermitValues(rs.getString("condition_formula"), parameter));
+
+					if (con) {
+						feesApplicable.put("condition", "true");
+					} else {
+						feesApplicable.put("condition",
+								FillMapUtility.interpretExpression(rs.getString("condition_formula")));
+					}
+
+				}
 
 			}
 		} catch (Exception e) {
@@ -146,15 +166,14 @@ public class NewRegistrationImpl {
 		}
 		return feesApplicable;
 	}
-	
-	public String getMobileAuthentication(String stateCd)
-	{
-		String mobileauth="false";
+
+	public String getMobileAuthentication(String stateCd) {
+		String mobileauth = "false";
 		TransactionManagerReadOnly tmgr = null;
 		PreparedStatement ps = null;
 		RowSet rs = null;
 		String sql = null;
-		sql = "select owner_mobile_verify_with_otp " + TableList.TM_CONFIGURATION_OTP + " where state_cd=?";
+		sql = "select owner_mobile_verify_with_otp from  " + TableList.TM_CONFIGURATION_OTP + " where state_cd=?";
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch mobile OTP verification");
 			ps = tmgr.prepareStatement(sql);
@@ -162,17 +181,12 @@ public class NewRegistrationImpl {
 			rs = tmgr.fetchDetachedRowSet();
 			if (rs.next()) {
 
-				if((rs.getString("owner_mobile_verify_with_otp")).equalsIgnoreCase("true"))
-				{
-					mobileauth="true";
-				}
-				else if(rs.getString("owner_mobile_verify_with_otp").equalsIgnoreCase("true"))
-				{
-					mobileauth="false";
-				}
-				else
-				{
-					mobileauth=FillMapUtility.interpretExpression(rs.getString("owner_mobile_verify_with_otp"));
+				if ((rs.getString("owner_mobile_verify_with_otp")).equalsIgnoreCase("true")) {
+					mobileauth = "true";
+				} else if (rs.getString("owner_mobile_verify_with_otp").equalsIgnoreCase("true")) {
+					mobileauth = "false";
+				} else {
+					mobileauth = FillMapUtility.interpretExpression(rs.getString("owner_mobile_verify_with_otp"));
 				}
 
 			}
@@ -190,12 +204,7 @@ public class NewRegistrationImpl {
 			}
 		}
 		return mobileauth;
-		
-	}
-	
-	
 
-	
-	
-	
+	}
+
 }

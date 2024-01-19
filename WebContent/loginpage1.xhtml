@@ -35,7 +35,8 @@ and open the template in the editor.
 		</p:selectOneMenu>
 		 <br/><br/>
 
-		<p:commandButton value="showResult" action="#{loginBean.redirectToSelectedService}" update="dynamicservicetable citizenflowtable rtoflowtable newregntable" /> 	
+		<p:commandButton value="showResult" action="#{loginBean.redirectToSelectedService}" update="dynamicservicetable citizenflowtable rtoflowtable" /> 	
+		
 		<br/><br/>
 		 <p:dataTable style="#{loginBean.tableShowPermit and loginBean.tableShow ? 'display:table;' : 'display:none;'}"  value="#{loginBean.permitdobj}" var="permitdobj" id="dynamicservicetable">
             <f:facet name="header">
@@ -63,35 +64,7 @@ and open the template in the editor.
 
                </p:dataTable>
                
-               <p:dataTable style="#{loginBean.renderNewRegn and loginBean.tableShow ? 'display:table;' : 'display:none;'}"  value="#{loginBean.newregndobj}" var="newregndobj" id="newregntable">
-            <f:facet name="header">
-            <p:outputLabel value="Configuration Details of #{loginBean.purposeDescr} of #{loginBean.selectedState}"/>
-            </f:facet>
-           
-                    <p:column headerText="Service Related to RTO">
-								<p:outputLabel value="#{newregndobj.serviceRto}" />
-							</p:column>
-							<p:column headerText="Service Related to Citizen">
-								<p:outputLabel value="#{newregndobj.serviceCitizen}" />
-							</p:column>
-							<p:column headerText="Fees Applicable">
-								<p:outputLabel value="#{newregndobj.feesApplicable}" />
-							</p:column>
-							<p:column headerText="Document Upload">
-								<p:outputLabel value="#{newregndobj.uploadDocument}" />
-							</p:column>
-							<p:column headerText="Mobile Authentication">
-								<p:outputLabel value="#{newregndobj.mobileAuthentication}" />
-							</p:column>
-							<p:column headerText="Fee Exempt">
-							<p:outputLabel value="#{newregndobj.feeExempt}" />
-							</p:column>
-							<p:column headerText="Tax Exempt Condition">
-							<p:outputLabel value="#{newregndobj.taxExempt}" />
-							</p:column>
-
-               </p:dataTable>
-               <br/><br/><br/>
+                             <br/><br/><br/>
                <p:dataTable style="#{loginBean.tableShowPermit and loginBean.tableShow? 'display:table;' : 'display:none;'}"  value="#{loginBean.flowCitizen}" var="flowcitizen" id="citizenflowtable">
             <f:facet name="header">
             <p:outputLabel value="Citizen Side flow of #{loginBean.purposeDescr} of #{loginBean.selectedState}"/>

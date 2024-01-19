@@ -92,6 +92,47 @@ public class FillMapUtility {
 		return permitTypeMap;
 
 	}
+	
+	public static Map<String, String> fillPmtSubCatgMap() {
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+		final Map<String, String> permitSubcatgMap = new LinkedHashMap<String, String>();
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql;
+		String descr = "";
+		sql = "select code,descr from " + TableList.VM_PERMIT_CATG +" where state_cd=? order by 2";
+
+		try {
+			tmgr = new TransactionManagerReadOnly("get permit subcategory description");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1,(String) session.getAttribute("state"));
+			rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+				permitSubcatgMap.put(String.valueOf(rs.getInt("code")), rs.getString("descr"));
+			}
+
+		}
+
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return permitSubcatgMap;
+
+	}
+	
+	
+	
 
 	public static Map<String, String> fillOwnerType() {
 		final Map<String, String> ownerTypeMap = new LinkedHashMap<String, String>();
@@ -282,6 +323,7 @@ public class FillMapUtility {
 		contextAwareCodeMeanings.put("<20>", FillMapUtility.fillOwnerType());
 		contextAwareCodeMeanings.put("<42>", FillMapUtility.fillRegnType());
 		contextAwareCodeMeanings.put("<22>",FillMapUtility.getFuelDescr());
+		contextAwareCodeMeanings.put("<28>",FillMapUtility.fillPmtSubCatgMap());
 		Map<String, String> vehTypeMap = new LinkedHashMap<String, String>();
 		Map<String, String> vehPurchasedAs = new LinkedHashMap<String, String>();
 		vehTypeMap.put("1", "Transport");
@@ -385,7 +427,7 @@ public class FillMapUtility {
 		// Define a regular expression pattern to match <61>
 		// String patternString =
 		// "<61>\\s+IN\\s*\\(\\d+(,\\s*\\d+)*\\)\\s*OR\\s*\\(.*\\)";
-		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28>";
+		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28><29>";
 		Pattern pattern = Pattern.compile(patternString);
 
 		// Create a matcher with the input string
@@ -398,11 +440,13 @@ public class FillMapUtility {
 			return true;
 		}
 	}
-	
+	 
 	
 	public static String interpretExpression(String expression) {
 		Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
 		vmtaxslabfieldsmap = FillMapUtility.getCodeDescr();
+		vmtaxslabfieldsmap.remove("<46>");
+		vmtaxslabfieldsmap.put("<46>","transport type");
 		Map<String, String> codeMeanings = new LinkedHashMap<String, String>();
 		StringBuffer result = new StringBuffer();
 		expression = expression.trim();
@@ -420,7 +464,7 @@ public class FillMapUtility {
 				matcher.appendReplacement(result, Matcher.quoteReplacement(contextreplacement));
 
 			} else {
-
+                System.out.println(code);
 				String replacement = (String) codeMeanings.getOrDefault(code, code);
 				matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
 				
