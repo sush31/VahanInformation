@@ -11,6 +11,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import javax.sql.RowSet;
 
+import bean.LoginBean;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManagerReadOnly;
 import oracle.net.aso.e;
@@ -184,7 +185,7 @@ public class FillMapUtility {
 			ps = tmgr.prepareStatement(sql);
 			rs = tmgr.fetchDetachedRowSet();
 			while (rs.next()) {
-				regnTypeMap.put(String.valueOf(rs.getString("regn_typecode")), rs.getString("descr"));
+				regnTypeMap.put("'"+String.valueOf(rs.getString("regn_typecode")+"'"), rs.getString("descr"));
 			}
 
 		}
@@ -324,6 +325,7 @@ public class FillMapUtility {
 		contextAwareCodeMeanings.put("<42>", FillMapUtility.fillRegnType());
 		contextAwareCodeMeanings.put("<22>",FillMapUtility.getFuelDescr());
 		contextAwareCodeMeanings.put("<28>",FillMapUtility.fillPmtSubCatgMap());
+		contextAwareCodeMeanings.put("<38>",FillMapUtility.getVehicleCatgDescr());
 		Map<String, String> vehTypeMap = new LinkedHashMap<String, String>();
 		Map<String, String> vehPurchasedAs = new LinkedHashMap<String, String>();
 		vehTypeMap.put("1", "Transport");
@@ -423,11 +425,37 @@ public class FillMapUtility {
 
 	}
 	
+	public static Map<String,String> getVehicleCatgDescr() {
+		Map<String, String> vehCatgdescr = new LinkedHashMap<String, String>();
+		String sqlTmActionSQL = "SELECT catg, catg_desc FROM " + TableList.VM_VCH_CATG ;
+		TransactionManagerReadOnly tmgr = null;
+		try {
+			tmgr = new TransactionManagerReadOnly("vehicle_category_description");
+			PreparedStatement prstmt = tmgr.prepareStatement(sqlTmActionSQL);
+			RowSet rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+				vehCatgdescr.put(rs.getString("catg"),rs.getString("catg_desc"));
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			try {
+				if (tmgr != null) {
+					tmgr.release();
+				}
+			} catch (Exception e) {
+
+			}
+		}
+
+		return vehCatgdescr;
+
+	}
 	public static boolean containsOnly61(String input) {
 		// Define a regular expression pattern to match <61>
 		// String patternString =
 		// "<61>\\s+IN\\s*\\(\\d+(,\\s*\\d+)*\\)\\s*OR\\s*\\(.*\\)";
-		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28><29>";
+		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28><29>|<38>";
 		Pattern pattern = Pattern.compile(patternString);
 
 		// Create a matcher with the input string
@@ -451,7 +479,7 @@ public class FillMapUtility {
 		StringBuffer result = new StringBuffer();
 		expression = expression.trim();
 		Map<String, Map<String, String>> contextAwareCodeMeanings = FillMapUtility.fetchContextAwareCodeMeaningsFromDatabase();
-		String patternString = "<(\\d+)>|(\\b\\d+\\b)";
+		String patternString = "<(\\d+)>|'([^']+)'|(\\b\\d+\\b)";
 		Pattern pattern = Pattern.compile(patternString);
 		Matcher matcher = pattern.matcher(expression);
 		while (matcher.find()) {
@@ -463,10 +491,14 @@ public class FillMapUtility {
 				String contextreplacement = (String) vmtaxslabfieldsmap.getOrDefault(code,code);
 				matcher.appendReplacement(result, Matcher.quoteReplacement(contextreplacement));
 
-			} else {
-                System.out.println(code);
-				String replacement = (String) codeMeanings.getOrDefault(code, code);
-				matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+			}
+			
+			
+			else {
+				  
+            
+                String replacement = (String) codeMeanings.getOrDefault(code,code);
+                matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
 				
 			}
 		}

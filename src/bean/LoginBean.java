@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -45,15 +46,15 @@ public class LoginBean implements Serializable {
 	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
-	public boolean tableShowPermit = false;
-	public boolean tableShow = false;
-
+	
+	
 	@PostConstruct
 	public void init() {
 
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		state_list = getStateList();
 		session.setAttribute("state", selectedState);
+	    
 	}
 
 	public List<SelectItem> getStateList() {
@@ -112,16 +113,15 @@ public class LoginBean implements Serializable {
 		return service_list;
 	}
 
-	public void redirectToSelectedService() {
+	public String redirectToSelectedService() {
+		String outcome="";
 
 		if (selectedService != null) {
-			tableShow = true;
+			
 			session.setAttribute("purcd", selectedService);
 			purposeDescr = FillMapUtility.getPurposeDescr(Integer.parseInt(selectedService));
 
-		} else {
-			tableShow = false;
-		}
+		} 
 		int purCd = (Integer.parseInt(selectedService));
 		if (purCd == TableConstants.VM_PMT_FRESH_PUR_CD || purCd == TableConstants.VM_PMT_APPLICATION_PUR_CD
 				|| purCd == TableConstants.VM_PMT_RENEWAL_PUR_CD || purCd == TableConstants.VM_PMT_TRANSFER_PUR_CD
@@ -137,34 +137,25 @@ public class LoginBean implements Serializable {
 				|| purCd == TableConstants.VM_PMT_RENEWAL_HOME_AUTH_PERMIT_PUR_CD
 				|| purCd == TableConstants.VM_PMT_SURRENDER_PUR_CD || purCd == TableConstants.VM_PMT_RESTORE_PUR_CD
 				|| purCd == TableConstants.VM_PMT_REPLACE_VEH_PUR_CD) {
-			tableShowPermit = true;
+			
 			permitdobj = new PermitImpl().getPermitServiceAttributes(selectedState, purCd, permitdobj);
 			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+			outcome="redirectToPermit";
+			
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE) {
 
 			newregndobj = new NewRegistrationImpl().getNewRegistrationAttributes(selectedState, newregndobj);
-			tableShowPermit = false;
-			redirectToTargetPage(purCd);
-
-		}
-
-	}
-
-	private String redirectToTargetPage(int purCd) {
-       String outcome="";
-		switch (purCd) {
-		case TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE:
-			outcome= "redirectToNewregistration";
-			break;
-
-		default:
-			outcome= "homepage";
+			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+			outcome="redirectToNewregistration";
+			
 
 		}
 		return outcome;
 
 	}
+
+	
 
 	public ArrayList<CitizenServiceFlowDobj> getFlowCitizen() {
 		return flowCitizen;
@@ -214,21 +205,7 @@ public class LoginBean implements Serializable {
 		this.permitdobj = permitdobj;
 	}
 
-	public boolean isTableShow() {
-		return tableShow;
-	}
-
-	public void setTableShow(boolean tableShow) {
-		this.tableShow = tableShow;
-	}
-
-	public boolean isTableShowPermit() {
-		return tableShowPermit;
-	}
-
-	public void setTableShowPermit(boolean tableShowPermit) {
-		this.tableShowPermit = tableShowPermit;
-	}
+	
 
 	public String getPurposeDescr() {
 		return purposeDescr;

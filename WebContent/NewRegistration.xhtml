@@ -19,40 +19,90 @@ and open the template in the editor.
 </h:head>
 <h:body>
 	<h:form>
-	
-               <p:dataTable  value="#{loginBean.newregndobj}" var="newregndobj" id="newregntable">
-            <f:facet name="header">
-            <p:outputLabel value="Configuration Details of #{loginBean.purposeDescr} of #{loginBean.selectedState}"/>
-            </f:facet>
-           
-                    <p:column headerText="Service Related to RTO">
-								<p:outputLabel value="#{newregndobj.serviceRto}" />
-							</p:column>
-							<p:column headerText="Service Related to Citizen">
-								<p:outputLabel value="#{newregndobj.serviceCitizen}" />
-							</p:column>
-							<p:column headerText="Fees Applicable">
-								<p:outputLabel value="#{newregndobj.feesApplicable}" />
-							</p:column>
-<!-- 							<p:column headerText="Fees Applicable condition"> -->
-<!-- 								<p:outputLabel value="#{newregndobj.feesApplicableCondition}" /> -->
-<!-- 							</p:column> -->
-							<p:column headerText="Document Upload">
-								<p:outputLabel value="#{newregndobj.uploadDocument}" />
-							</p:column>
-							<p:column headerText="Mobile Authentication">
-								<p:outputLabel value="#{newregndobj.mobileAuthentication}" />
-							</p:column>
-							<p:column headerText="Fee Exempt">
-							<p:outputLabel value="#{newregndobj.feeExempt}" />
-							</p:column>
-							<p:column headerText="Tax Exempt Condition">
-							<p:outputLabel value="#{newregndobj.taxExempt}" />
-							</p:column>
 
-               </p:dataTable>
-               </h:form>
-               </h:body>
-               </html>
-               
-	
+		<p:dataTable value="#{loginBean.newregndobj}" var="newregndobj"
+			id="newregntable">
+			<f:facet name="header">
+				<p:outputLabel
+					value="Configuration Details of #{loginBean.purposeDescr} of #{loginBean.selectedState}" />
+			</f:facet>
+
+			<p:column headerText="Service Related to RTO">
+				<p:outputLabel value="#{newregndobj.serviceRto}" />
+			</p:column>
+			<p:column headerText="Service Related to Citizen">
+				<p:outputLabel value="#{newregndobj.serviceCitizen}" />
+			</p:column>
+			<p:column headerText="Document Upload">
+				<p:outputLabel value="#{newregndobj.uploadDocument}" />
+			</p:column>
+			<p:column headerText="Mobile Authentication">
+				<p:outputLabel value="#{newregndobj.mobileAuthentication}" />
+			</p:column>
+			<p:column headerText="Fee Exempt">
+				<p:outputLabel value="#{newregndobj.feeExempt}" />
+			</p:column>
+			<p:column headerText="Tax Exempt Condition">
+				<p:outputLabel value="#{newregndobj.taxExempt}" />
+			</p:column>
+
+		</p:dataTable>
+        <br/><br/>
+		<!-- fees applicable table -->
+
+		<p:dataTable
+			value="#{loginBean.newregndobj.feesApplicable.entrySet()}" var="fees"
+			id="feestable">
+			<f:facet name="header">
+				<p:outputLabel
+					value="Fees applicable for  #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
+			</f:facet>
+			<p:column>
+				<f:facet name="header">Purpose</f:facet>
+           	                   #{fees.key}
+           
+                             </p:column>
+			<p:column>
+				<f:facet name="header">Condition</f:facet>
+                               #{fees.value}
+                              </p:column>
+             
+         </p:dataTable>
+
+				<!-- fees applicable table ends -->
+
+				<br />
+				<br />
+				
+				<p:dataTable value="#{loginBean.flowRto}" var="flowrto"
+					id="rtoflowtable">
+					<f:facet name="header">
+						<p:outputLabel
+							value="RTO Side flow of #{loginBean.purposeDescr} of #{loginBean.selectedState}" />
+					</f:facet>
+					<p:column headerText="flow_serial_no">
+						<p:outputLabel value="#{flowrto.flow_srno}" />
+					</p:column>
+					<p:column headerText="Action Code">
+						<p:outputLabel value="#{flowrto.action_cd}" />
+					</p:column>
+					<p:column headerText="Action Description">
+						<p:outputLabel value="#{flowrto.action_descr}" />
+					</p:column>
+					<p:column headerText="Is Backward">
+						<p:outputLabel value="#{flowrto.backward}" />
+					</p:column>
+					<p:column headerText="Conditon Formula Description">
+						<p:outputLabel value="#{flowrto.condition_formula}" />
+					</p:column>
+
+
+				</p:dataTable>
+				<br />
+				<br />
+				<p:button value="Back to Home" outcome="homePage" />
+	</h:form>
+</h:body>
+</html>
+
+

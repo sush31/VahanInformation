@@ -15,12 +15,14 @@ import CommonUtils.VehicleParameters;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManagerReadOnly;
 import dobj.NewRegistrationDobj;
+import dobj.RtoServiceFlowDobj;
 
 public class NewRegistrationImpl {
 
 	HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 	int purCd = Integer.parseInt((String) session.getAttribute("purcd"));
-
+	String stateCd= (String) session.getAttribute("state");
+	
 	public NewRegistrationDobj getNewRegistrationAttributes(String stateCd, NewRegistrationDobj newRegndobj) {
 
 		String zeroFees;
@@ -61,6 +63,7 @@ public class NewRegistrationImpl {
 				newRegndobj.setMobileAuthentication(getMobileAuthentication(stateCd));
 				newRegndobj.setServiceRto(new PermitImpl().isServiceRto(stateCd, purCd));
 				newRegndobj.setServiceCitizen(new PermitImpl().isServiceCitizen(stateCd, purCd));
+				
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -133,24 +136,19 @@ public class NewRegistrationImpl {
 			rs = tmgr.fetchDetachedRowSet();
 			while (rs.next()) {
 
-				feesApplicable.put("feepurpose", FillMapUtility.getPurposeDescr(rs.getInt("pur_cd")));
+				String purpose= FillMapUtility.getPurposeDescr(rs.getInt("pur_cd"));
 				String condition = rs.getString("condition_formula");
 				if (condition.equalsIgnoreCase("true")) {
-					feesApplicable.put("condition", condition);
+					feesApplicable.put(purpose, condition);
 				} else {
-					boolean con = FormulaUtils.isCondition(
-							FormulaUtils.replaceTagPermitValues(rs.getString("condition_formula"), parameter));
-
-					if (con) {
-						feesApplicable.put("condition", "true");
-					} else {
-						feesApplicable.put("condition",
+					
+						feesApplicable.put(purpose,
 								FillMapUtility.interpretExpression(rs.getString("condition_formula")));
 					}
 
 				}
 
-			}
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {
