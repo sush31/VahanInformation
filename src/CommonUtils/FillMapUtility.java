@@ -455,7 +455,7 @@ public class FillMapUtility {
 		// Define a regular expression pattern to match <61>
 		// String patternString =
 		// "<61>\\s+IN\\s*\\(\\d+(,\\s*\\d+)*\\)\\s*OR\\s*\\(.*\\)";
-		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28><29>|<38>";
+		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28><29>|<38>|<2>|<0>|<81>|<82>|<35>|<60>";
 		Pattern pattern = Pattern.compile(patternString);
 
 		// Create a matcher with the input string
@@ -495,9 +495,15 @@ public class FillMapUtility {
 			
 			
 			else {
-				  
-            
-                String replacement = (String) codeMeanings.getOrDefault(code,code);
+				 String replacement;
+                if(codeMeanings !=null)
+                {
+               replacement = (String) codeMeanings.getOrDefault(code,code);
+                }
+                else
+                {
+                replacement=code;
+                }
                 matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
 				
 			}
