@@ -347,6 +347,7 @@ abstract public class TableList implements Serializable {
 	public static final String VT_TAX_BASED_ON_APPL = ONLINE_SCHEMA + "VT_TAX_BASED_ON_APPL";
 	public static final String VT_TAX_BREAKUP_APPL = ONLINE_SCHEMA + "VT_TAX_BREAKUP_APPL";
 	public static final String VT_TEMP_APPL_TRANSACTION = ONLINE_SCHEMA + "VT_TEMP_APPL_TRANSACTION";
+	public static final String VM_STATE_RUNNING_SERVICES =  ONLINE_SCHEMA+"vm_state_running_services";
 	// vinay : 12-12-2015
 	public static final String VT_OTP = ONLINE_SCHEMA + "VT_OTP";
 	public static final String VH_OTP = ONLINE_SCHEMA + "VH_OTP";

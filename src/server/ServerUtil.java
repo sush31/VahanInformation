@@ -1,14 +1,11 @@
+//package server;
+//
 //
 ///*
 // * To change this template, choose Tools | Templates
 // * and open the template in the editor.
 // */
-//package nic.vahan.server;
 //
-//import static nic.vahan.CommonUtils.FormulaUtils.isCondition;
-//import static nic.vahan.CommonUtils.FormulaUtils.replaceTagValues;
-//
-//import java.io.BufferedReader;
 ///**
 // *
 // * @author tranC074

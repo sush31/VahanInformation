@@ -21,9 +21,11 @@ import databaseconnection.TransactionManager;
 import dobj.CitizenServiceFlowDobj;
 import dobj.NewRegistrationDobj;
 import dobj.PermitDobj;
+import dobj.RenewalOfRegistrationDobj;
 import dobj.RtoServiceFlowDobj;
 import impl.NewRegistrationImpl;
 import impl.PermitImpl;
+import impl.RenewalOfRegistrationImpl;
 
 import javax.faces.model.SelectItem;
 
@@ -43,6 +45,7 @@ public class LoginBean implements Serializable {
 	public PermitDobj permitdobj = new PermitDobj();
 	public NewRegistrationDobj newregndobj = new NewRegistrationDobj();
 	public CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
+	public RenewalOfRegistrationDobj renewalRegDobj=new RenewalOfRegistrationDobj();
 	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
@@ -148,6 +151,15 @@ public class LoginBean implements Serializable {
 			newregndobj = new NewRegistrationImpl().getNewRegistrationAttributes(selectedState, newregndobj);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
 			outcome="redirectToNewregistration";
+			
+
+		}
+		else if (purCd == TableConstants.VM_TRANSACTION_MAST_REN_REG) {
+
+			renewalRegDobj = new RenewalOfRegistrationImpl().getRenewalRegistrationAttributes(selectedState, renewalRegDobj);
+			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+			flowCitizen=  new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+			outcome="redirectToRenewalRegistration";
 			
 
 		}

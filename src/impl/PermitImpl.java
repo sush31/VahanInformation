@@ -184,17 +184,19 @@ public boolean isServiceRto(String stateCd, int purCd)
 		PreparedStatement ps = null;
 		RowSet rs = null;
 		String sql = null;
-		sql = "select * from " + TableList.PERMIT_PURPOSE_ACTION_FLOW + " where state_cd=? and pur_cd=?";
+		sql = "select pur_cd from " + TableList.VM_STATE_RUNNING_SERVICES + " where state_cd=?" ;
 		try {
-			tmgr = new TransactionManagerReadOnly("fetch flow from RTO");
+			tmgr = new TransactionManagerReadOnly("fetch whether service runs on citizen");
 			ps = tmgr.prepareStatement(sql);
 			ps.setString(1, stateCd);
-			ps.setInt(2, purCd);
 			rs = tmgr.fetchDetachedRowSet();
 			if (rs.next()) {
 
-				isServiceCitizen = true;
-
+				String purposes=rs.getString("pur_cd");
+				if (purposes.contains(String.valueOf(purCd)))
+				{
+					isServiceCitizen=true;
+				}
 			}
 
 		} catch (Exception e) {

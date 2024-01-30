@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.RowSet;
 
 import bean.LoginBean;
+import databaseconnection.TableConstants;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManagerReadOnly;
 import oracle.net.aso.e;
@@ -513,6 +514,231 @@ public class FillMapUtility {
 		return result.toString();
 		
 
+	}
+	
+	// upload doc at RTO end
+	public static Boolean getDocumentUploadRTO(String stateCd,int purCd) {
+		boolean uploadDocument = false;
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select is_doc_upload,pur_cd  from  " + TableList.TM_CONFIGURATION_DMS + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch dms");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			VehicleParameters parameter = new VehicleParameters();
+			parameter.setPUR_CD(purCd);
+			if (rs.next()) {
+
+				uploadDocument = (rs.getBoolean("is_doc_upload"))
+						&& (rs.getString("pur_cd").contains(String.valueOf(purCd)));
+
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return uploadDocument;
+
+	}
+	
+	// upload document at citizen end
+	
+	public static Boolean getDocumentUploadCitizen(String stateCd,int purCd) {
+		boolean uploadDocument = false;
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select upload_doc,pur_cd from   " + TableList.VM_ONLINE_CONFIGURATION + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch doc upload");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			VehicleParameters parameter = new VehicleParameters();
+			parameter.setPUR_CD(purCd);
+			if (rs.next()) {
+
+				uploadDocument = (rs.getBoolean("is_doc_upload"))
+						&& (rs.getString("pur_cd").contains(String.valueOf(purCd)));
+
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return uploadDocument;
+
+	}
+	// mobile authentication for citizen end
+	public static boolean[] getAdhaarAndMobAuthentication(String stateCd,int purCd) {
+		boolean auth[] =new boolean[2];
+		// auth[0]=aadhar authentication, auth[1]=mobile authentication
+		String service_auth_mode;
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select service_auth_mode from   " + TableList.VM_ONLINE_SERVICECHECKS+ " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch doc upload");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			VehicleParameters parameter = new VehicleParameters();
+			parameter.setPUR_CD(purCd);
+			if (rs.next()) {
+				service_auth_mode=rs.getString("service_auth_mode");
+				String patternStringAadhar = "<A,\\(([^)]+)\\)>";
+				String patternStringMobile = "<M,\\(([^)]+)\\)>";
+				Pattern patternaadhar = Pattern.compile(patternStringAadhar);
+				Pattern patternmobile=Pattern.compile(patternStringMobile);
+				Matcher matcheraadhar = patternaadhar.matcher(service_auth_mode);
+				Matcher matchermobile = patternmobile.matcher(service_auth_mode);
+				 if (matcheraadhar.find()) {
+			            // Extract the numbers after 'A'
+			            String aadharString = matcheraadhar.group(1);
+
+			            // Split the numbers string using commas
+			           String[] numbersArray = aadharString.split(",");
+
+			            // Print the extracted numbers
+			            for (String number : numbersArray) {
+			               if (Integer.parseInt(number) == purCd)
+			               {
+			            	   
+			            	   auth[0]=true;
+			               }
+			               else
+			               {
+			            	   auth[0]=false;
+			               }
+			            	   
+			            }
+			        }
+				 if (matchermobile.find()) {
+			            // Extract the numbers after 'A'
+			            String mobileString = matchermobile.group(1);
+
+			            // Split the numbers string using commas
+			           String[] numbersArray = mobileString.split(",");
+
+			            // Print the extracted numbers
+			            for (String number : numbersArray) {
+			               if (Integer.parseInt(number) == purCd)
+			               {
+			            	   
+			            	   auth[1]=true;
+			               }
+			               else
+			               {
+			            	   auth[1]=false;
+			               }
+			            	   
+			            }
+			        }
+				 
+				 
+			    }
+			
+
+			}
+		 catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return auth;
+
+	}
+	
+	
+	
+	
+// fees applicable for registration related purposes
+	public static Map<String,String> getFeesApplicableForNewRegn(String stateCd,int purCd) {
+		Map<String, String> feesApplicable = new LinkedHashMap<String, String>();
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		VehicleParameters parameter = new VehicleParameters();
+		parameter.setPUR_CD(purCd);
+		if(purCd==TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE)
+			
+		{
+		sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+				+ " where state_cd=? and action='NEW'";
+		}
+		else if(purCd==TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE)
+		{
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='REN'";
+		}
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch dms");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+
+				String purpose= FillMapUtility.getPurposeDescr(rs.getInt("pur_cd"));
+				String condition = rs.getString("condition_formula");
+				if (condition.equalsIgnoreCase("true")) {
+					feesApplicable.put(purpose, condition);
+				} else {
+					
+						feesApplicable.put(purpose,
+								FillMapUtility.interpretExpression(rs.getString("condition_formula")));
+					}
+
+				}
+
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return feesApplicable;
 	}
 
 }

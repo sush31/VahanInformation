@@ -58,8 +58,8 @@ public class NewRegistrationImpl {
 				}
 				newRegndobj.setFeeExempt(zeroFees);
 				newRegndobj.setTaxExempt(tax_exemption);
-				newRegndobj.setUploadDocument(getDocumentUpload(stateCd));
-				newRegndobj.setFeesApplicable(getFeesApplicableForNewRegn(stateCd));
+				newRegndobj.setUploadDocument(FillMapUtility.getDocumentUploadRTO(stateCd,purCd));
+				newRegndobj.setFeesApplicable(FillMapUtility.getFeesApplicableForNewRegn(stateCd,purCd));
 				newRegndobj.setMobileAuthentication(getMobileAuthentication(stateCd));
 				newRegndobj.setServiceRto(new PermitImpl().isServiceRto(stateCd, purCd));
 				newRegndobj.setServiceCitizen(new PermitImpl().isServiceCitizen(stateCd, purCd));
@@ -82,88 +82,7 @@ public class NewRegistrationImpl {
 
 	}
 
-	public Boolean getDocumentUpload(String stateCd) {
-		boolean uploadDocument = false;
-		TransactionManagerReadOnly tmgr = null;
-		PreparedStatement ps = null;
-		RowSet rs = null;
-		String sql = null;
-		sql = "select is_doc_upload,pur_cd  from  " + TableList.TM_CONFIGURATION_DMS + " where state_cd=?";
-		try {
-			tmgr = new TransactionManagerReadOnly("fetch dms");
-			ps = tmgr.prepareStatement(sql);
-			ps.setString(1, stateCd);
-			rs = tmgr.fetchDetachedRowSet();
-			VehicleParameters parameter = new VehicleParameters();
-			parameter.setPUR_CD(1);
-			if (rs.next()) {
-
-				uploadDocument = (rs.getBoolean("is_doc_upload"))
-						&& (rs.getString("pur_cd").contains(String.valueOf(purCd)));
-
-			}
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		} finally {
-			{
-				try {
-					if (tmgr != null) {
-						tmgr.release();
-					}
-				} catch (Exception ee) {
-
-				}
-			}
-		}
-		return uploadDocument;
-
-	}
-
-	public Map<String,String> getFeesApplicableForNewRegn(String stateCd) {
-		Map<String, String> feesApplicable = new LinkedHashMap<String, String>();
-		TransactionManagerReadOnly tmgr = null;
-		PreparedStatement ps = null;
-		RowSet rs = null;
-		String sql = null;
-		VehicleParameters parameter = new VehicleParameters();
-		parameter.setPUR_CD(1);
-		sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
-				+ " where state_cd=? and action='NEW'";
-		try {
-			tmgr = new TransactionManagerReadOnly("fetch dms");
-			ps = tmgr.prepareStatement(sql);
-			ps.setString(1, stateCd);
-			rs = tmgr.fetchDetachedRowSet();
-			while (rs.next()) {
-
-				String purpose= FillMapUtility.getPurposeDescr(rs.getInt("pur_cd"));
-				String condition = rs.getString("condition_formula");
-				if (condition.equalsIgnoreCase("true")) {
-					feesApplicable.put(purpose, condition);
-				} else {
-					
-						feesApplicable.put(purpose,
-								FillMapUtility.interpretExpression(rs.getString("condition_formula")));
-					}
-
-				}
-
-			
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		} finally {
-			{
-				try {
-					if (tmgr != null) {
-						tmgr.release();
-					}
-				} catch (Exception ee) {
-
-				}
-			}
-		}
-		return feesApplicable;
-	}
+	
 
 	public String getMobileAuthentication(String stateCd) {
 		String mobileauth = "false";

@@ -21,6 +21,11 @@
 			<from-outcome>redirectToPermit</from-outcome>
 			<to-view-id>/PermitService.xhtml</to-view-id>
 		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>redirectToRenewalRegistration</from-outcome>
+			<to-view-id>/RenewalOfRegistration.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 </faces-config>
