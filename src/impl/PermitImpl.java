@@ -68,12 +68,18 @@ public class PermitImpl {
 							aadharAuthentication = aadharAuth ? "true" : "false";
 
 						} else {
-							if (aadharAuth == true)
-								aadharAuthentication = "true";
-							else {
+							  if(!enab_faceless.contains("NOT"))
+							     {
+							       if (aadharAuth == true)
+								     aadharAuthentication = "true";
+							   else {
 								aadharAuthentication = FillMapUtility.interpretExpression(enab_faceless);
-							}
-						}
+							        }
+						       }
+							  else
+							  {
+								  aadharAuthentication = FillMapUtility.interpretExpression(enab_faceless);
+							  }
 
 					}
 					boolean uploaddoc = rs.getBoolean("upload_doc");
@@ -122,7 +128,7 @@ public class PermitImpl {
 				}
 
 			}
-		} catch (Exception e) {
+		}} catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {
 			{
@@ -139,8 +145,7 @@ public class PermitImpl {
 
 	}
 
-	
-public boolean isServiceRto(String stateCd, int purCd)
+	public boolean isServiceRto(String stateCd, int purCd)
 
 	{
 		TransactionManagerReadOnly tmgr = null;
@@ -184,7 +189,7 @@ public boolean isServiceRto(String stateCd, int purCd)
 		PreparedStatement ps = null;
 		RowSet rs = null;
 		String sql = null;
-		sql = "select pur_cd from " + TableList.VM_STATE_RUNNING_SERVICES + " where state_cd=?" ;
+		sql = "select pur_cd from " + TableList.VM_STATE_RUNNING_SERVICES + " where state_cd=?";
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch whether service runs on citizen");
 			ps = tmgr.prepareStatement(sql);
@@ -192,10 +197,9 @@ public boolean isServiceRto(String stateCd, int purCd)
 			rs = tmgr.fetchDetachedRowSet();
 			if (rs.next()) {
 
-				String purposes=rs.getString("pur_cd");
-				if (purposes.contains(String.valueOf(purCd)))
-				{
-					isServiceCitizen=true;
+				String purposes = rs.getString("pur_cd");
+				if (purposes.contains(String.valueOf(purCd))) {
+					isServiceCitizen = true;
 				}
 			}
 

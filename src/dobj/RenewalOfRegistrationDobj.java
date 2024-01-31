@@ -20,8 +20,9 @@ public class RenewalOfRegistrationDobj {
 	public String renewRegFromDate;
 	public String renewRegFor;
 	public boolean vintageAllowed;
+	public boolean vintageOwnerChoice;
 	public int renewValue;
-	public String renewAllowAnywhere;
+	public boolean renewAllowAnywhere;
 	public boolean isServiceRto() {
 		return serviceRto;
 	}
@@ -51,6 +52,13 @@ public class RenewalOfRegistrationDobj {
 	}
 	public void setTaxExempt(String taxExempt) {
 		this.taxExempt = taxExempt;
+	}
+	
+	public boolean isRenewAllowAnywhere() {
+		return renewAllowAnywhere;
+	}
+	public void setRenewAllowAnywhere(boolean renewAllowAnywhere) {
+		this.renewAllowAnywhere = renewAllowAnywhere;
 	}
 	public boolean isUploadDocumentRto() {
 		return uploadDocumentRto;
@@ -89,18 +97,20 @@ public class RenewalOfRegistrationDobj {
 	public void setVintageAllowed(boolean vintageAllowed) {
 		this.vintageAllowed = vintageAllowed;
 	}
+	
+	public boolean isVintageOwnerChoice() {
+		return vintageOwnerChoice;
+	}
+	public void setVintageOwnerChoice(boolean vintageOwnerChoice) {
+		this.vintageOwnerChoice = vintageOwnerChoice;
+	}
 	public int getRenewValue() {
 		return renewValue;
 	}
 	public void setRenewValue(int renewValue) {
 		this.renewValue = renewValue;
 	}
-	public String getRenewAllowAnywhere() {
-		return renewAllowAnywhere;
-	}
-	public void setRenewAllowAnywhere(String renewAllowAnywhere) {
-		this.renewAllowAnywhere = renewAllowAnywhere;
-	}
+	
 	public boolean isMobileAuthenticationCitizen() {
 		return mobileAuthenticationCitizen;
 	}
