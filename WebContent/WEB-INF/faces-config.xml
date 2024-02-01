@@ -4,29 +4,35 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	<navigation-rule>
 		<from-view-id>*</from-view-id>
-		
-         <navigation-case>
+
+		<navigation-case>
 			<from-outcome>homePage</from-outcome>
 			<to-view-id>/loginpage1.xhtml</to-view-id>
-			<redirect/>
+			<redirect />
 		</navigation-case>
 
 		<navigation-case>
 			<from-outcome>redirectToNewregistration</from-outcome>
 			<to-view-id>/NewRegistration.xhtml</to-view-id>
-			<redirect/>
+			<redirect />
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>redirectToPermit</from-outcome>
 			<to-view-id>/PermitService.xhtml</to-view-id>
 		</navigation-case>
-		
+
 		<navigation-case>
 			<from-outcome>redirectToRenewalRegistration</from-outcome>
 			<to-view-id>/RenewalOfRegistration.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
 
+
+
+		<navigation-case>
+			<from-outcome>redirectToTransferOfOwnership</from-outcome>
+			<to-view-id>/TransferOfOwnership.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 </faces-config>
 

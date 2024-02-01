@@ -62,7 +62,7 @@ public class RenewalOfRegistrationImpl {
 					renRegRequiredFrom = rs.getString("ren_regn_from_date");
 				}
 
-				renewalRegDobj.setRenewRegFromDate("renRegRequiredFrom");
+				renewalRegDobj.setRenewRegFromDate(renRegRequiredFrom);
 				renewalRegDobj.setRenewRegFor(renRegCondition);
 			}
 

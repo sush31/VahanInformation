@@ -12,6 +12,7 @@ import javax.sql.RowSet;
 import CommonUtils.FillMapUtility;
 import CommonUtils.FormulaUtils;
 import CommonUtils.VehicleParameters;
+import databaseconnection.TableConstants;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManagerReadOnly;
 import dobj.NewRegistrationDobj;
@@ -123,5 +124,41 @@ public class NewRegistrationImpl {
 		return mobileauth;
 
 	}
+	
+	public boolean getAadharAuthentication(String stateCd) {
+		boolean aadhareauth = false;
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select login_via_aadhar from  " + TableList.TM_CONFIGURATION + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch aadhar authentication verification");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+
+				aadhareauth= (purCd==TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE)?rs.getBoolean("login_via_aadhar"):false;
+				
+
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return aadhareauth;
+
+	}
+
 
 }

@@ -662,7 +662,7 @@ public class FillMapUtility {
 		String sql = null;
 		VehicleParameters parameter = new VehicleParameters();
 		parameter.setPUR_CD(purCd);
-		if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE)
+		if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE || purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE )
 
 		{
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
@@ -749,12 +749,11 @@ public class FillMapUtility {
 		RowSet rs = null;
 		String sql = null;
 		String zeroFees="";
-		sql = "select fee_amt_zero from  " + TableList.TM_CONFIGURATION + " where state_cd=? and pur_cd=?";
+		sql = "select fee_amt_zero from  " + TableList.TM_CONFIGURATION + " where state_cd=? ";
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch new registartion attributes");
 			ps = tmgr.prepareStatement(sql);
 			ps.setString(1, stateCd);
-			ps.setInt(2, purCd);
 			rs = tmgr.fetchDetachedRowSet();
 			VehicleParameters parameter = new VehicleParameters();
 			parameter.setPUR_CD(purCd);
@@ -793,5 +792,82 @@ public class FillMapUtility {
 		return zeroFees;
 
 	}
+	
+	public static boolean isServiceRto(String stateCd, int purCd)
+
+	{
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		boolean isServiceRto=false;
+		sql = "select * from " + TableList.TM_PURPOSE_ACTION_FLOW + " where state_cd=? and pur_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch flow from RTO");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			ps.setInt(2, purCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+
+				isServiceRto = true;
+
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return isServiceRto;
+
+	}
+
+	public static boolean isServiceCitizen(String stateCd, int purCd)
+
+	{
+		boolean isServiceCitizen=false;
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select pur_cd from " + TableList.VM_STATE_RUNNING_SERVICES + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch whether service runs on citizen");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+
+				String purposes = rs.getString("pur_cd");
+				if (purposes.contains(String.valueOf(purCd))) {
+					isServiceCitizen = true;
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return isServiceCitizen;
+	}
+
 
 }

@@ -17,5 +17,116 @@ and open the template in the editor.
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 </h:head>
+<h:body>
+	<h:form>
 
+		<p:dataTable value="#{loginBean.renewalRegDobj}" var="renewalregndobj"
+			id="renewregntable">
+			<f:facet name="header">
+				<p:outputLabel
+					value="Configuration Details of #{loginBean.purposeDescr} of #{loginBean.selectedState}" />
+			</f:facet>
+
+			<p:column headerText="Service Related to RTO">
+				<p:outputLabel value="#{renewalregndobj.serviceRto}" />
+			</p:column>
+			<p:column headerText="Service Related to Citizen">
+				<p:outputLabel value="#{renewalregndobj.serviceCitizen}" />
+			</p:column>
+			<p:column headerText="Document Upload at RTO">
+				<p:outputLabel value="#{renewalregndobj.uploadDocumentRto}" />
+			</p:column>
+			<p:column headerText="Document Upload at Citizen">
+				<p:outputLabel value="#{renewalregndobj.uploadDocumentCitizen}" />
+			</p:column>
+			<p:column headerText="Mobile Authentication at RTO">
+				<p:outputLabel value="#{renewalregndobj.mobileAuthenticationRto}" />
+			</p:column>
+			<p:column headerText="Mobile Authentication at Citizen">
+				<p:outputLabel value="#{renewalregndobj.mobileAuthenticationCitizen}" />
+			</p:column>
+			<p:column headerText="Aadhar Authentication at RTO">
+				<p:outputLabel value="#{renewalregndobj.aadharAuthenticationRto}" />
+			</p:column>
+			<p:column headerText="Aadhar Authentication at Citizen">
+				<p:outputLabel value="#{renewalregndobj.aadharAuthenticationCitizen}" />
+			</p:column>
+			<p:column headerText="Renew Registration From Date">
+				<p:outputLabel value="#{renewalregndobj.renewRegFromDate}" />
+			</p:column>
+			<p:column headerText="Renew Registration for time period">
+				<p:outputLabel value="#{renewalregndobj. renewRegFor}" />
+			</p:column>
+			<p:column headerText="Vintage Allowed">
+				<p:outputLabel value="#{renewalregndobj. vintageAllowed}" />
+			</p:column>
+			<p:column headerText="Owner choice on vintage allowed">
+				<p:outputLabel value="#{renewalregndobj. vintageOwnerChoice}" />
+			</p:column>
+			<p:column headerText="Renewal allowed anywhere">
+				<p:outputLabel value="#{renewalregndobj. renewAllowAnywhere}" />
+			</p:column>
+			<p:column headerText="Fee Exempt">
+				<p:outputLabel value="#{renewalregndobj. feeExempt}" />
+			</p:column>
+
+		</p:dataTable>
+        <br/><br/>
+		<!-- fees applicable table -->
+
+		<p:dataTable
+			value="#{loginBean.renewalRegDobj.feesApplicable.entrySet()}" var="fees"
+			id="feestable">
+			<f:facet name="header">
+				<p:outputLabel
+					value="Fees applicable for  #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
+			</f:facet>
+			<p:column>
+				<f:facet name="header">Purpose</f:facet>
+           	                   #{fees.key}
+           
+                             </p:column>
+			<p:column>
+				<f:facet name="header">Condition</f:facet>
+                               #{fees.value}
+                              </p:column>
+             
+         </p:dataTable>
+
+				<!-- fees applicable table ends -->
+
+				<br />
+				<br />
+				
+				<p:dataTable value="#{loginBean.flowRto}" var="flowrto"
+					id="rtoflowtable">
+					<f:facet name="header">
+						<p:outputLabel
+							value="RTO Side flow of #{loginBean.purposeDescr} of #{loginBean.selectedState}" />
+					</f:facet>
+					<p:column headerText="flow_serial_no">
+						<p:outputLabel value="#{flowrto.flow_srno}" />
+					</p:column>
+					<p:column headerText="Action Code">
+						<p:outputLabel value="#{flowrto.action_cd}" />
+					</p:column>
+					<p:column headerText="Action Description">
+						<p:outputLabel value="#{flowrto.action_descr}" />
+					</p:column>
+					<p:column headerText="Is Backward">
+						<p:outputLabel value="#{flowrto.backward}" />
+					</p:column>
+					<p:column headerText="Conditon Formula Description">
+						<p:outputLabel value="#{flowrto.condition_formula}" />
+					</p:column>
+
+
+				</p:dataTable>
+				<br />
+				<br />
+				<p:button value="Back to Home" outcome="homePage" />
+	</h:form>
+</h:body>
 </html>
+
+

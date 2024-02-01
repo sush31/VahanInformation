@@ -19,6 +19,7 @@ import databaseconnection.TableConstants;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManager;
 import dobj.CitizenServiceFlowDobj;
+import dobj.CommonDobj;
 import dobj.NewRegistrationDobj;
 import dobj.PermitDobj;
 import dobj.RenewalOfRegistrationDobj;
@@ -26,6 +27,7 @@ import dobj.RtoServiceFlowDobj;
 import impl.NewRegistrationImpl;
 import impl.PermitImpl;
 import impl.RenewalOfRegistrationImpl;
+import impl.TransferOfOwnershipImpl;
 
 import javax.faces.model.SelectItem;
 
@@ -46,6 +48,7 @@ public class LoginBean implements Serializable {
 	public NewRegistrationDobj newregndobj = new NewRegistrationDobj();
 	public CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
 	public RenewalOfRegistrationDobj renewalRegDobj=new RenewalOfRegistrationDobj();
+	public CommonDobj commonDobj=new CommonDobj();
 	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
@@ -146,13 +149,18 @@ public class LoginBean implements Serializable {
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
 			outcome="redirectToPermit";
 			
-		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE) {
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE || purCd ==TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE) 
+		{
 
 			newregndobj = new NewRegistrationImpl().getNewRegistrationAttributes(selectedState, newregndobj);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
 			outcome="redirectToNewregistration";
 			
 
+		}
+		else if(purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE)
+		{
+			
 		}
 		else if (purCd == TableConstants.VM_TRANSACTION_MAST_REN_REG) {
 
@@ -163,7 +171,20 @@ public class LoginBean implements Serializable {
 			
 
 		}
+		else if (purCd == TableConstants.VM_TRANSACTION_MAST_TO) {
+
+			commonDobj.setServiceCitizen((FillMapUtility.isServiceCitizen(selectedState, purCd)));
+			commonDobj.setServiceRto(FillMapUtility.isServiceRto(selectedState, purCd));
+			commonDobj.setUploadDocumentCitizen(FillMapUtility.getDocumentUploadCitizen(selectedState, purCd));
+			commonDobj.setUploadDocumentRto(FillMapUtility.getDocumentUploadRTO(selectedState, purCd));
+			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+			flowCitizen=  new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+			outcome="redirectToTransferOfOwnership";
+			
+
+		}
 		return outcome;
+		
 
 	}
 
@@ -175,6 +196,14 @@ public class LoginBean implements Serializable {
 
 	public void setFlowCitizen(ArrayList<CitizenServiceFlowDobj> flowCitizen) {
 		this.flowCitizen = flowCitizen;
+	}
+
+	public RenewalOfRegistrationDobj getRenewalRegDobj() {
+		return renewalRegDobj;
+	}
+
+	public void setRenewalRegDobj(RenewalOfRegistrationDobj renewalRegDobj) {
+		this.renewalRegDobj = renewalRegDobj;
 	}
 
 	public List<SelectItem> getState_list() {

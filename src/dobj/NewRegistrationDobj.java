@@ -11,6 +11,7 @@ public class NewRegistrationDobj {
 	public String taxExempt;
 	public boolean uploadDocument;
 	public String mobileAuthentication;
+	public boolean aadharAuthentication;
 	public Map<String,String> feesApplicable;
 	
 	public NewRegistrationDobj()
@@ -74,6 +75,15 @@ public class NewRegistrationDobj {
 
 	public void setMobileAuthentication(String mobileAuthentication) {
 		this.mobileAuthentication = mobileAuthentication;
+	}
+	
+
+	public boolean getAadharAuthentication() {
+		return aadharAuthentication;
+	}
+
+	public void setAadharAuthentication(boolean aadharAuthentication) {
+		this.aadharAuthentication = aadharAuthentication;
 	}
 
 	public String getTaxExempt() {
