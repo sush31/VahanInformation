@@ -20,8 +20,8 @@ and open the template in the editor.
 <h:body>
 	<h:form>
 
-		<p:dataTable value="#{loginBean.transferOwnershipDobj}" var="item"
-			id="transferofownership">
+		<p:dataTable value="#{loginBean.commonDobj}" var="item"
+			id="commonservicepage">
 			<f:facet name="header">
 				<p:outputLabel
 					value="Configuration Details of #{loginBean.purposeDescr} of #{loginBean.selectedState}" />
@@ -39,40 +39,25 @@ and open the template in the editor.
 			<p:column headerText="Document Upload at Citizen">
 				<p:outputLabel value="#{item.uploadDocumentCitizen}" />
 			</p:column>
-			
+
 			<p:column headerText="Mobile Authentication at Citizen">
-				<p:outputLabel
-					value="#{item.mobileAuthenticationCitizen}" />
+				<p:outputLabel value="#{item.mobileAuthenticationCitizen}" />
 			</p:column>
-		
+
 			<p:column headerText="Aadhar Authentication at Citizen">
-				<p:outputLabel
-					value="#{item.aadharAuthenticationCitizen}" />
+				<p:outputLabel value="#{item.aadharAuthenticationCitizen}" />
 			</p:column>
 			<p:column headerText="Fee Exemption">
-				<p:outputLabel
-					value="#{item.feeExempt}" />
+				<p:outputLabel value="#{item.feeExempt}" />
 			</p:column>
 			<p:column headerText="Tax Exemption">
-				<p:outputLabel
-					value="#{item.taxExempt}" />
+				<p:outputLabel value="#{item.taxExempt}" />
 			</p:column>
-			
+
 			<p:column headerText="Application inward at other RTO">
 				<p:outputLabel value="#{item.applInwardOtherRto}" />
 			</p:column>
-			<p:column headerText="TO Retention">
-				<p:outputLabel value="#{item.toRetention}" />
-			</p:column>
-			<p:column headerText="Check for TO with NOC">
-				<p:outputLabel
-					value="#{item.transferOfOwnershipWithtNoc}" />
-			</p:column>
-			<p:column headerText="Check for TO without NOC">
-				<p:outputLabel
-					value="#{item.transferOfOwnershipWithoutNoc}" />
-			</p:column>
-
+		
 		</p:dataTable>
 		<br />
 		<br />

@@ -5,10 +5,20 @@ public class CommonDobj {
 	public boolean serviceRto;
 	public boolean serviceCitizen;
 	public String feeExempt;
+	public String taxExempt;
 	public boolean uploadDocumentRto;
 	public boolean uploadDocumentCitizen;
-	public String mobileAuthenticationCitizen;
+	public boolean mobileAuthenticationCitizen;
 	public boolean aadharAuthenticationCitizen;
+	public boolean applInwardOtherRto;
+	public boolean verifyBankOnhypth;
+	public int purCd;
+	
+	
+	public CommonDobj()
+	{
+		
+	}
 	
 	public boolean isServiceRto() {
 		return serviceRto;
@@ -25,12 +35,32 @@ public class CommonDobj {
 	public String getFeeExempt() {
 		return feeExempt;
 	}
+	
+	public String getTaxExempt() {
+		return taxExempt;
+	}
+
+	public void setTaxExempt(String taxExempt) {
+		this.taxExempt = taxExempt;
+	}
+
 	public void setFeeExempt(String feeExempt) {
 		this.feeExempt = feeExempt;
 	}
 	public boolean isUploadDocumentRto() {
 		return uploadDocumentRto;
 	}
+	
+	
+
+	public boolean isVerifyBankOnhypth() {
+		return verifyBankOnhypth;
+	}
+
+	public void setVerifyBankOnhypth(boolean verifyBankOnhypth) {
+		this.verifyBankOnhypth = verifyBankOnhypth;
+	}
+
 	public void setUploadDocumentRto(boolean uploadDocumentRto) {
 		this.uploadDocumentRto = uploadDocumentRto;
 	}
@@ -40,10 +70,10 @@ public class CommonDobj {
 	public void setUploadDocumentCitizen(boolean uploadDocumentCitizen) {
 		this.uploadDocumentCitizen = uploadDocumentCitizen;
 	}
-	public String getMobileAuthenticationCitizen() {
+	public boolean getMobileAuthenticationCitizen() {
 		return mobileAuthenticationCitizen;
 	}
-	public void setMobileAuthenticationCitizen(String mobileAuthenticationCitizen) {
+	public void setMobileAuthenticationCitizen(boolean mobileAuthenticationCitizen) {
 		this.mobileAuthenticationCitizen = mobileAuthenticationCitizen;
 	}
 	public boolean isAadharAuthenticationCitizen() {
@@ -52,6 +82,23 @@ public class CommonDobj {
 	public void setAadharAuthenticationCitizen(boolean aadharAuthenticationCitizen) {
 		this.aadharAuthenticationCitizen = aadharAuthenticationCitizen;
 	}
+	public boolean isApplInwardOtherRto() {
+		return applInwardOtherRto;
+	}
+	public void setApplInwardOtherRto(boolean applInwardOtherRto) {
+		this.applInwardOtherRto = applInwardOtherRto;
+	}
+
+	public int getPurCd() {
+		return purCd;
+	}
+
+	public void setPurCd(int purCd) {
+		this.purCd = purCd;
+	}
+
+	
+	
 	
 	
 	

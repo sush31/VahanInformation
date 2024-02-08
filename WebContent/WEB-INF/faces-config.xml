@@ -26,12 +26,13 @@
 			<from-outcome>redirectToRenewalRegistration</from-outcome>
 			<to-view-id>/RenewalOfRegistration.xhtml</to-view-id>
 		</navigation-case>
-
-
-
-		<navigation-case>
+        <navigation-case>
 			<from-outcome>redirectToTransferOfOwnership</from-outcome>
 			<to-view-id>/TransferOfOwnership.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>redirectToCommonService</from-outcome>
+			<to-view-id>/CommonService.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>

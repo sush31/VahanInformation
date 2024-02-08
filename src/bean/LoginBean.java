@@ -24,6 +24,8 @@ import dobj.NewRegistrationDobj;
 import dobj.PermitDobj;
 import dobj.RenewalOfRegistrationDobj;
 import dobj.RtoServiceFlowDobj;
+import dobj.TransferOfOwnershipDobj;
+import impl.CommonServiceImpl;
 import impl.NewRegistrationImpl;
 import impl.PermitImpl;
 import impl.RenewalOfRegistrationImpl;
@@ -47,20 +49,20 @@ public class LoginBean implements Serializable {
 	public PermitDobj permitdobj = new PermitDobj();
 	public NewRegistrationDobj newregndobj = new NewRegistrationDobj();
 	public CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
-	public RenewalOfRegistrationDobj renewalRegDobj=new RenewalOfRegistrationDobj();
-	public CommonDobj commonDobj=new CommonDobj();
+	public RenewalOfRegistrationDobj renewalRegDobj = new RenewalOfRegistrationDobj();
+	public TransferOfOwnershipDobj transferOwnershipDobj = new TransferOfOwnershipDobj();
+	public CommonDobj commonDobj = new CommonDobj();
 	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
-	
-	
+
 	@PostConstruct
 	public void init() {
 
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		state_list = getStateList();
 		session.setAttribute("state", selectedState);
-	    
+
 	}
 
 	public List<SelectItem> getStateList() {
@@ -120,14 +122,14 @@ public class LoginBean implements Serializable {
 	}
 
 	public String redirectToSelectedService() {
-		String outcome="";
+		String outcome = "";
 
 		if (selectedService != null) {
-			
+
 			session.setAttribute("purcd", selectedService);
 			purposeDescr = FillMapUtility.getPurposeDescr(Integer.parseInt(selectedService));
 
-		} 
+		}
 		int purCd = (Integer.parseInt(selectedService));
 		if (purCd == TableConstants.VM_PMT_FRESH_PUR_CD || purCd == TableConstants.VM_PMT_APPLICATION_PUR_CD
 				|| purCd == TableConstants.VM_PMT_RENEWAL_PUR_CD || purCd == TableConstants.VM_PMT_TRANSFER_PUR_CD
@@ -143,52 +145,73 @@ public class LoginBean implements Serializable {
 				|| purCd == TableConstants.VM_PMT_RENEWAL_HOME_AUTH_PERMIT_PUR_CD
 				|| purCd == TableConstants.VM_PMT_SURRENDER_PUR_CD || purCd == TableConstants.VM_PMT_RESTORE_PUR_CD
 				|| purCd == TableConstants.VM_PMT_REPLACE_VEH_PUR_CD) {
-			
+
 			permitdobj = new PermitImpl().getPermitServiceAttributes(selectedState, purCd, permitdobj);
 			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
-			outcome="redirectToPermit";
-			
-		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE || purCd ==TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE) 
-		{
+			outcome = "redirectToPermit";
+
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE) {
 
 			newregndobj = new NewRegistrationImpl().getNewRegistrationAttributes(selectedState, newregndobj);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
-			outcome="redirectToNewregistration";
-			
+			outcome = "redirectToNewregistration";
 
 		}
-		else if(purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE)
-		{
-			
-		}
+
 		else if (purCd == TableConstants.VM_TRANSACTION_MAST_REN_REG) {
 
-			renewalRegDobj = new RenewalOfRegistrationImpl().getRenewalRegistrationAttributes(selectedState, renewalRegDobj);
+			renewalRegDobj = new RenewalOfRegistrationImpl().getRenewalRegistrationAttributes(selectedState,
+					renewalRegDobj);
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
-			flowCitizen=  new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
-			outcome="redirectToRenewalRegistration";
-			
+			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+			outcome = "redirectToRenewalRegistration";
 
-		}
-		else if (purCd == TableConstants.VM_TRANSACTION_MAST_TO) {
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_TO) {
 
-			commonDobj.setServiceCitizen((FillMapUtility.isServiceCitizen(selectedState, purCd)));
+			transferOwnershipDobj.setServiceCitizen((FillMapUtility.isServiceCitizen(selectedState, purCd)));
+			transferOwnershipDobj.setServiceRto(FillMapUtility.isServiceRto(selectedState, purCd));
+			transferOwnershipDobj
+					.setUploadDocumentCitizen(FillMapUtility.getDocumentUploadCitizen(selectedState, purCd));
+			transferOwnershipDobj.setUploadDocumentRto(FillMapUtility.getDocumentUploadRTO(selectedState, purCd));
+			transferOwnershipDobj.setApplInwardOtherRto(FillMapUtility.getApplInwardOtherRto(selectedState, purCd));
+			transferOwnershipDobj.setFeeExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
+			transferOwnershipDobj.setTaxExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
+			boolean auth[] = FillMapUtility.getAdhaarAndMobAuthentication(selectedState, purCd);
+			transferOwnershipDobj.setAadharAuthenticationCitizen(auth[0]);
+			transferOwnershipDobj.setMobileAuthenticationCitizen(auth[1]);
+			transferOwnershipDobj = new TransferOfOwnershipImpl().getTOAttributes(transferOwnershipDobj);
+			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+
+			outcome = "redirectToTransferOfOwnership";
+
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_CHG_ADD
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_DUP_RC
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_ADD_HYPO
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_REM_HYPO
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_HPC) {
+			commonDobj.setPurCd(purCd);
+			commonDobj.setServiceRto(FillMapUtility.isServiceCitizen(selectedState, purCd));
 			commonDobj.setServiceRto(FillMapUtility.isServiceRto(selectedState, purCd));
 			commonDobj.setUploadDocumentCitizen(FillMapUtility.getDocumentUploadCitizen(selectedState, purCd));
 			commonDobj.setUploadDocumentRto(FillMapUtility.getDocumentUploadRTO(selectedState, purCd));
+			commonDobj.setApplInwardOtherRto(FillMapUtility.getApplInwardOtherRto(selectedState, purCd));
+			commonDobj.setFeeExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
+			commonDobj.setTaxExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
+			boolean auth[] = FillMapUtility.getAdhaarAndMobAuthentication(selectedState, purCd);
+			commonDobj.setAadharAuthenticationCitizen(auth[0]);
+			commonDobj.setMobileAuthenticationCitizen(auth[1]);
+			commonDobj.setVerifyBankOnhypth(CommonServiceImpl.getHypthVerifyBank(selectedState, purCd));
 			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
-			flowCitizen=  new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
-			outcome="redirectToTransferOfOwnership";
-			
+			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+			outcome = "redirectToCommonService";
 
 		}
 		return outcome;
-		
 
 	}
-
-	
 
 	public ArrayList<CitizenServiceFlowDobj> getFlowCitizen() {
 		return flowCitizen;
@@ -246,8 +269,6 @@ public class LoginBean implements Serializable {
 		this.permitdobj = permitdobj;
 	}
 
-	
-
 	public String getPurposeDescr() {
 		return purposeDescr;
 	}
@@ -286,6 +307,22 @@ public class LoginBean implements Serializable {
 
 	public void setNewregndobj(NewRegistrationDobj newregndobj) {
 		this.newregndobj = newregndobj;
+	}
+
+	public TransferOfOwnershipDobj getTransferOwnershipDobj() {
+		return transferOwnershipDobj;
+	}
+
+	public void setTransferOwnershipDobj(TransferOfOwnershipDobj transferOwnershipDobj) {
+		this.transferOwnershipDobj = transferOwnershipDobj;
+	}
+
+	public CommonDobj getCommonDobj() {
+		return commonDobj;
+	}
+
+	public void setCommonDobj(CommonDobj commonDobj) {
+		this.commonDobj = commonDobj;
 	}
 
 }

@@ -318,6 +318,7 @@ public class FillMapUtility {
 	public static Map<String, Map<String, String>> fetchContextAwareCodeMeaningsFromDatabase() {
 		Map<String, Map<String, String>> contextAwareCodeMeanings = new HashMap<>();
 		contextAwareCodeMeanings.put("<61>", FillMapUtility.fillPurposeCodeMap());
+		contextAwareCodeMeanings.put("<15>", FillMapUtility.fillPurposeCodeMap());
 		contextAwareCodeMeanings.put("<25>", FillMapUtility.fillPmtTypeMap());
 		contextAwareCodeMeanings.put("<33>", FillMapUtility.fillVehicleClassMap());
 		contextAwareCodeMeanings.put("<94>", FillMapUtility.getOfficeDescr());
@@ -560,8 +561,8 @@ public class FillMapUtility {
 			ps.setString(1, stateCd);
 			rs = tmgr.fetchDetachedRowSet();
 			if (rs.next()) {
-                
-				boolean contains= rs.getString("pur_cd").contains(String.valueOf(purCd));
+
+				boolean contains = rs.getString("pur_cd").contains(String.valueOf(purCd));
 				uploadDocument = (rs.getBoolean("upload_doc"))
 						&& (rs.getString("pur_cd").contains(String.valueOf(purCd)));
 
@@ -588,8 +589,8 @@ public class FillMapUtility {
 		boolean auth[] = new boolean[2];
 		// auth[0]=aadhar authentication, auth[1]=mobile authentication
 		String service_auth_mode;
-		boolean aadharauth=false;
-		boolean mobauth=false;
+		boolean aadharauth = false;
+		boolean mobauth = false;
 		TransactionManagerReadOnly tmgr = null;
 		PreparedStatement ps = null;
 		RowSet rs = null;
@@ -613,28 +614,23 @@ public class FillMapUtility {
 				if (matcheraadhar.find()) {
 					// Extract the numbers after 'A'
 					String aadharString = matcheraadhar.group(1);
-					if(aadharString.contains(String.valueOf(purCd))|| aadharString.equals(String.valueOf(0)))
-					 {
-						
-						aadharauth=true;
-				     }
-				  if (matchermobile.find()) {
-					// Extract the numbers after 'M'
-					String mobileString = matchermobile.group(1);
-					   if(mobileString.contains(String.valueOf(purCd))|| mobileString.equals(String.valueOf(0)))
-					   {
-						   mobauth=true;
-					   }
+					if (aadharString.contains(String.valueOf(purCd)) || aadharString.equals(String.valueOf(0))) {
 
-					
+						aadharauth = true;
+					}
+					if (matchermobile.find()) {
+						// Extract the numbers after 'M'
+						String mobileString = matchermobile.group(1);
+						if (mobileString.contains(String.valueOf(purCd)) || mobileString.equals(String.valueOf(0))) {
+							mobauth = true;
+						}
 
 					}
 				}
-				
 
 			}
-			auth[0]=aadharauth;
-			auth[1]=mobauth;
+			auth[0] = aadharauth;
+			auth[1] = mobauth;
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -662,7 +658,8 @@ public class FillMapUtility {
 		String sql = null;
 		VehicleParameters parameter = new VehicleParameters();
 		parameter.setPUR_CD(purCd);
-		if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE || purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE )
+		if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE)
 
 		{
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
@@ -748,7 +745,7 @@ public class FillMapUtility {
 		PreparedStatement ps = null;
 		RowSet rs = null;
 		String sql = null;
-		String zeroFees="";
+		String zeroFees = "";
 		sql = "select fee_amt_zero from  " + TableList.TM_CONFIGURATION + " where state_cd=? ";
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch new registartion attributes");
@@ -792,7 +789,58 @@ public class FillMapUtility {
 		return zeroFees;
 
 	}
-	
+
+	public String getTaxExempt(String stateCd, int purCd) {
+
+		String taxExempt = "";
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select tax_exemption from  " + TableList.TM_CONFIGURATION + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch new registartion attributes");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			VehicleParameters parameter = new VehicleParameters();
+			parameter.setPUR_CD(1);
+			if (rs.next()) {
+
+				taxExempt = rs.getString("tax_exemption");
+				boolean taxExemption = FormulaUtils
+						.isCondition(FormulaUtils.replaceTagPermitValues(taxExempt, parameter));
+				if (FillMapUtility.containsOnly61(taxExempt)) {
+					taxExempt = taxExemption ? "true" : "false";
+				} else {
+					if (!taxExempt.contains("NOT")) {
+						if (taxExemption == true) {
+							taxExempt = "true";
+						}
+					} else {
+						taxExempt = interpretExpression(taxExempt);
+					}
+
+				}
+
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return taxExempt;
+
+	}
+
 	public static boolean isServiceRto(String stateCd, int purCd)
 
 	{
@@ -800,7 +848,7 @@ public class FillMapUtility {
 		PreparedStatement ps = null;
 		RowSet rs = null;
 		String sql = null;
-		boolean isServiceRto=false;
+		boolean isServiceRto = false;
 		sql = "select * from " + TableList.TM_PURPOSE_ACTION_FLOW + " where state_cd=? and pur_cd=?";
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch flow from RTO");
@@ -834,7 +882,7 @@ public class FillMapUtility {
 	public static boolean isServiceCitizen(String stateCd, int purCd)
 
 	{
-		boolean isServiceCitizen=false;
+		boolean isServiceCitizen = false;
 		TransactionManagerReadOnly tmgr = null;
 		PreparedStatement ps = null;
 		RowSet rs = null;
@@ -868,6 +916,5 @@ public class FillMapUtility {
 		}
 		return isServiceCitizen;
 	}
-
 
 }
