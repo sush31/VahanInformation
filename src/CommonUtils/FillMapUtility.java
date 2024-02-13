@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -243,6 +244,42 @@ public class FillMapUtility {
 
 	}
 
+	public static String getVehClassDecr(int vehClass) {
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql, sql1 = null;
+		String descr = "";
+		sql = "select descr from " + TableList.VM_VH_CLASS + " where vh_class=?";
+
+		try {
+			tmgr = new TransactionManagerReadOnly("get vehicle class description");
+			ps = tmgr.prepareStatement(sql);
+			ps.setInt(1, vehClass);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+				descr = rs.getString("descr");
+			}
+
+		}
+
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return descr;
+
+	}
+
 	public static Map<String, String> getCodeDescr() {
 		TransactionManagerReadOnly tmgr = null;
 		Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
@@ -452,10 +489,12 @@ public class FillMapUtility {
 	}
 
 	public static boolean containsOnly61(String input) {
-		// Define a regular expression pattern to match <61>
-		// String patternString =
-		// "<61>\\s+IN\\s*\\(\\d+(,\\s*\\d+)*\\)\\s*OR\\s*\\(.*\\)";
-		String patternString = "<33>|<25>|<20>|<94>|<46>|<regn_no>|<22>|<42>|<46>|<26>|<28><29>|<38>|<2>|<0>|<81>|<82>|<35>|<60>";
+		
+		Map<String, String> vmTaxSlabFields = getCodeDescr();
+		vmTaxSlabFields.remove("<61");
+		String patternString = vmTaxSlabFields.keySet().stream().map(Object::toString)
+				.collect(Collectors.joining("|"));
+
 		Pattern pattern = Pattern.compile(patternString);
 
 		// Create a matcher with the input string
@@ -525,8 +564,15 @@ public class FillMapUtility {
 			rs = tmgr.fetchDetachedRowSet();
 			if (rs.next()) {
 
-				uploadDocument = (rs.getBoolean("is_doc_upload"))
-						&& (rs.getString("pur_cd").contains(String.valueOf(purCd)));
+				String purposes = rs.getString("pur_cd");
+				String[] purposeArray = purposes.split(",");
+				for (String purpose : purposeArray) {
+					if (Integer.parseInt(purpose) == purCd) {
+						uploadDocument = rs.getBoolean("is_doc_upload");
+						break;
+					}
+
+				}
 
 			}
 		} catch (Exception e) {
@@ -562,10 +608,15 @@ public class FillMapUtility {
 			rs = tmgr.fetchDetachedRowSet();
 			if (rs.next()) {
 
-				boolean contains = rs.getString("pur_cd").contains(String.valueOf(purCd));
-				uploadDocument = (rs.getBoolean("upload_doc"))
-						&& (rs.getString("pur_cd").contains(String.valueOf(purCd)));
+				String purposes = rs.getString("pur_cd");
+				String[] purposeArray = purposes.split(",");
+				for (String purpose : purposeArray) {
+					if (Integer.parseInt(purpose) == purCd) {
+						uploadDocument = rs.getBoolean("is_doc_upload");
+						break;
+					}
 
+				}
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -614,21 +665,45 @@ public class FillMapUtility {
 				if (matcheraadhar.find()) {
 					// Extract the numbers after 'A'
 					String aadharString = matcheraadhar.group(1);
-					if (aadharString.contains(String.valueOf(purCd)) || aadharString.equals(String.valueOf(0))) {
-
-						aadharauth = true;
-					}
-					if (matchermobile.find()) {
-						// Extract the numbers after 'M'
-						String mobileString = matchermobile.group(1);
-						if (mobileString.contains(String.valueOf(purCd)) || mobileString.equals(String.valueOf(0))) {
-							mobauth = true;
+					aadharauth = aadharString.equals(String.valueOf(0));
+					if (!aadharauth) {
+						String[] purposeArray = aadharString.split(",");
+						for (String purpose : purposeArray) {
+							if (Integer.parseInt(purpose) == purCd) { // Check
+																		// if
+																		// purCd
+																		// matches
+																		// any
+								aadharauth = true; // value
+								break; // Exit loop if found
+							}
 						}
 
 					}
 				}
 
+				if (matchermobile.find()) {
+					// Extract the numbers after 'M'
+					String mobileString = matchermobile.group(1);
+					mobauth = mobileString.equals(String.valueOf(0));
+					if (!mobauth) {
+						String[] purposeArray = mobileString.split(",");
+						for (String purpose : purposeArray) {
+							if (Integer.parseInt(purpose) == purCd) { // Check
+																		// if
+																		// purCd
+																		// matches
+																		// any
+								mobauth = true; // value
+								break; // Exit loop if found
+							}
+						}
+
+					}
+
+				}
 			}
+
 			auth[0] = aadharauth;
 			auth[1] = mobauth;
 
@@ -715,9 +790,14 @@ public class FillMapUtility {
 			ps.setString(1, stateCd);
 			rs = tmgr.fetchDetachedRowSet();
 			if (rs.next()) {
+				String purposes = rs.getString("pur_cd");
+				String[] purposeArray = purposes.split(",");
+				for (String purpose : purposeArray) {
+					if (Integer.parseInt(purpose) == purCd) {
+						val = true;
+						break;
+					}
 
-				if (rs.getString("pur_code").contains(String.valueOf(purCd))) {
-					val = true;
 				}
 
 			}
@@ -896,8 +976,13 @@ public class FillMapUtility {
 			if (rs.next()) {
 
 				String purposes = rs.getString("pur_cd");
-				if (purposes.contains(String.valueOf(purCd))) {
-					isServiceCitizen = true;
+				String[] purposeArray = purposes.split(",");
+				for (String purpose : purposeArray) {
+					if (Integer.parseInt(purpose) == purCd) {
+						isServiceCitizen = true;
+						break;
+					}
+
 				}
 			}
 

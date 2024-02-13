@@ -76,54 +76,56 @@ public class PermitImpl {
 							}
 
 						}
-						boolean uploaddoc = rs.getBoolean("upload_doc");
-						if (uploaddoc) {
-							uploadDoc = rs.getString("upload_doc_condition");
-							uploadDocument = FormulaUtils.isCondition(FormulaUtils
-									.replaceTagPermitValues(rs.getString("upload_doc_condition"), parameter));
-							if (FillMapUtility.containsOnly61(uploadDoc) == true) {
-								uploadDoc = uploadDocument ? "true" : "false";
-
-							} else {
-								if (uploadDocument == true)
-									uploadDoc = "true";
-								else {
-									uploadDoc = FillMapUtility.interpretExpression(uploadDoc);
-								}
-							}
-						} else {
-							uploadDoc = "false";
-						}
-						permitdobj.setUploadDocument(uploadDoc);
-						permitdobj.setAadharAuthentication(aadharAuthentication);
-						permitdobj.setServiceCitizen(isServiceCitizen(stateCd, purCd));
-						permitdobj.setServiceRto(isServiceRto(stateCd, purCd));
-						String noFeePurpose = rs.getString("no_fee_purpose");
-						if (noFeePurpose.equalsIgnoreCase("false")) {
-							noFeeCitizen = "false";
-						} else {
-							boolean noFee = FormulaUtils.isCondition(
-									FormulaUtils.replaceTagPermitValues(rs.getString("no_fee_purpose"), parameter));
-
-							if (FillMapUtility.containsOnly61(rs.getString("no_fee_purpose"))) {
-
-								noFeeCitizen = noFee ? "true" : "false";
-							} else {
-								if (noFee) {
-									noFeeCitizen = "true";
-								} else {
-									noFeeCitizen = FillMapUtility.interpretExpression(rs.getString("no_fee_purpose"));
-								}
-							}
-							permitdobj.setCitizenFeeExempt(noFeeCitizen);
-
-						}
-
 					}
+				}
+				boolean uploaddoc = rs.getBoolean("upload_doc");
+				if (uploaddoc) {
+					uploadDoc = rs.getString("upload_doc_condition");
+					uploadDocument = FormulaUtils.isCondition(
+							FormulaUtils.replaceTagPermitValues(rs.getString("upload_doc_condition"), parameter));
+					if (FillMapUtility.containsOnly61(uploadDoc) == true) {
+						uploadDoc = uploadDocument ? "true" : "false";
+
+					} else {
+						if (uploadDocument == true)
+							uploadDoc = "true";
+						else {
+							uploadDoc = FillMapUtility.interpretExpression(uploadDoc);
+						}
+					}
+				} else {
+					uploadDoc = "false";
+				}
+				permitdobj.setUploadDocument(uploadDoc);
+				permitdobj.setAadharAuthentication(aadharAuthentication);
+				permitdobj.setServiceCitizen(isServiceCitizen(stateCd, purCd));
+				permitdobj.setServiceRto(isServiceRto(stateCd, purCd));
+				String noFeePurpose = rs.getString("no_fee_purpose");
+				if (noFeePurpose.equalsIgnoreCase("false")) {
+					noFeeCitizen = "false";
+				} else {
+					boolean noFee = FormulaUtils.isCondition(
+							FormulaUtils.replaceTagPermitValues(rs.getString("no_fee_purpose"), parameter));
+
+					if (FillMapUtility.containsOnly61(rs.getString("no_fee_purpose"))) {
+
+						noFeeCitizen = noFee ? "true" : "false";
+					} else {
+						if (noFee) {
+							noFeeCitizen = "true";
+						} else {
+							noFeeCitizen = FillMapUtility.interpretExpression(rs.getString("no_fee_purpose"));
+						}
+					}
+					permitdobj.setCitizenFeeExempt(noFeeCitizen);
 
 				}
+
 			}
-		} catch (Exception e) {
+
+		}
+
+		catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {
 			{
@@ -193,12 +195,19 @@ public class PermitImpl {
 			if (rs.next()) {
 
 				String purposes = rs.getString("pur_cd");
-				if (purposes.contains(String.valueOf(purCd))) {
-					isServiceCitizen = true;
+				String[] purposeArray = purposes.split(",");
+				for (String purpose : purposeArray) {
+					if (Integer.parseInt(purpose) == purCd) { // Check if purCd
+																// matches any
+																// value
+						isServiceCitizen = true;
+						break; // Exit loop if found
+					}
 				}
 			}
+		}
 
-		} catch (Exception e) {
+		catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {
 			{

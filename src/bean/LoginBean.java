@@ -20,6 +20,8 @@ import databaseconnection.TableList;
 import databaseconnection.TransactionManager;
 import dobj.CitizenServiceFlowDobj;
 import dobj.CommonDobj;
+import dobj.ConversionOfVehicleDobj;
+import dobj.ConvertibleClasses;
 import dobj.NewRegistrationDobj;
 import dobj.PermitDobj;
 import dobj.RenewalOfRegistrationDobj;
@@ -52,9 +54,12 @@ public class LoginBean implements Serializable {
 	public RenewalOfRegistrationDobj renewalRegDobj = new RenewalOfRegistrationDobj();
 	public TransferOfOwnershipDobj transferOwnershipDobj = new TransferOfOwnershipDobj();
 	public CommonDobj commonDobj = new CommonDobj();
+	public ConversionOfVehicleDobj convDobj = new ConversionOfVehicleDobj();
 	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
+	ConversionOfVehicleDobj conversionDobj = new ConversionOfVehicleDobj();
+	ArrayList<ConvertibleClasses> list = new ArrayList<>();
 
 	@PostConstruct
 	public void init() {
@@ -91,9 +96,8 @@ public class LoginBean implements Serializable {
 		session.setAttribute("state", selectedState);
 		service_list = new ArrayList<>();
 		TransactionManager tmgr = null;
-		String sql = "select distinct tmf.pur_cd,tp.descr from " + TableList.TM_PURPOSE_ACTION_FLOW + " tmf inner join "
-				+ TableList.TM_PURPOSE_MAST + " tp"
-				+ " on tmf.pur_cd=tp.pur_cd  where state_cd=? group by tmf.pur_cd,tp.descr order by pur_cd";
+		String sql = "select distinct pur_cd,descr from  " + TableList.TM_PURPOSE_MAST
+				+ " where pur_cd IN (select pur_cd from " + TableList.TM_PURPOSE_ACTION_FLOW + " where state_cd=?)";
 		PreparedStatement ps;
 		RowSet rs;
 		try {
@@ -131,6 +135,21 @@ public class LoginBean implements Serializable {
 
 		}
 		int purCd = (Integer.parseInt(selectedService));
+		commonDobj.setServiceCitizen(FillMapUtility.isServiceCitizen(selectedState, purCd));
+		commonDobj.setServiceRto(FillMapUtility.isServiceRto(selectedState, purCd));
+		commonDobj.setApplInwardOtherRto(FillMapUtility.getApplInwardOtherRto(selectedState, purCd));
+		commonDobj.setFeeExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
+		commonDobj.setTaxExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
+		commonDobj.setUploadDocumentRto(FillMapUtility.getDocumentUploadRTO(selectedState, purCd));
+		flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+		if (commonDobj.isServiceCitizen() == true) {
+			commonDobj.setUploadDocumentCitizen(FillMapUtility.getDocumentUploadCitizen(selectedState, purCd));
+			boolean auth[] = FillMapUtility.getAdhaarAndMobAuthentication(selectedState, purCd);
+			commonDobj.setAadharAuthenticationCitizen(auth[0]);
+			commonDobj.setMobileAuthenticationCitizen(auth[1]);
+			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+		}
+
 		if (purCd == TableConstants.VM_PMT_FRESH_PUR_CD || purCd == TableConstants.VM_PMT_APPLICATION_PUR_CD
 				|| purCd == TableConstants.VM_PMT_RENEWAL_PUR_CD || purCd == TableConstants.VM_PMT_TRANSFER_PUR_CD
 				|| purCd == TableConstants.VM_PMT_TRANSFER_DEATH_CASE_PUR_CD
@@ -147,15 +166,14 @@ public class LoginBean implements Serializable {
 				|| purCd == TableConstants.VM_PMT_REPLACE_VEH_PUR_CD) {
 
 			permitdobj = new PermitImpl().getPermitServiceAttributes(selectedState, purCd, permitdobj);
-			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
-			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
 			outcome = "redirectToPermit";
 
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE) {
 
 			newregndobj = new NewRegistrationImpl().getNewRegistrationAttributes(selectedState, newregndobj);
-			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
+			// flowRto = new PermitImpl().getRtoServiceFlow(selectedState,
+			// purCd, rtoFlowdobj);
 			outcome = "redirectToNewregistration";
 
 		}
@@ -164,8 +182,11 @@ public class LoginBean implements Serializable {
 
 			renewalRegDobj = new RenewalOfRegistrationImpl().getRenewalRegistrationAttributes(selectedState,
 					renewalRegDobj);
-			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
-			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+			// flowRto = new PermitImpl().getRtoServiceFlow(selectedState,
+			// purCd, rtoFlowdobj);
+			// flowCitizen = new
+			// PermitImpl().getCitizenServiceFlow(selectedState, purCd,
+			// citizenFlow);
 			outcome = "redirectToRenewalRegistration";
 
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_TO) {
@@ -178,35 +199,40 @@ public class LoginBean implements Serializable {
 			transferOwnershipDobj.setApplInwardOtherRto(FillMapUtility.getApplInwardOtherRto(selectedState, purCd));
 			transferOwnershipDobj.setFeeExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
 			transferOwnershipDobj.setTaxExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
-			boolean auth[] = FillMapUtility.getAdhaarAndMobAuthentication(selectedState, purCd);
-			transferOwnershipDobj.setAadharAuthenticationCitizen(auth[0]);
-			transferOwnershipDobj.setMobileAuthenticationCitizen(auth[1]);
+			boolean auth1[] = FillMapUtility.getAdhaarAndMobAuthentication(selectedState, purCd);
+			transferOwnershipDobj.setAadharAuthenticationCitizen(auth1[0]);
+			transferOwnershipDobj.setMobileAuthenticationCitizen(auth1[1]);
 			transferOwnershipDobj = new TransferOfOwnershipImpl().getTOAttributes(transferOwnershipDobj);
-			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
-			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+			// flowRto = new PermitImpl().getRtoServiceFlow(selectedState,
+			// purCd, rtoFlowdobj);
+			// flowCitizen = new
+			// PermitImpl().getCitizenServiceFlow(selectedState, purCd,
+			// citizenFlow);
 
 			outcome = "redirectToTransferOfOwnership";
 
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_CHG_ADD
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_DUP_RC
-				|| purCd == TableConstants.VM_TRANSACTION_MAST_ADD_HYPO
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_VEH_ALTER) {
+
+			outcome = "redirectToCommonService";
+
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_ADD_HYPO
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_REM_HYPO
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_HPC) {
-			commonDobj.setPurCd(purCd);
-			commonDobj.setServiceRto(FillMapUtility.isServiceCitizen(selectedState, purCd));
-			commonDobj.setServiceRto(FillMapUtility.isServiceRto(selectedState, purCd));
-			commonDobj.setUploadDocumentCitizen(FillMapUtility.getDocumentUploadCitizen(selectedState, purCd));
-			commonDobj.setUploadDocumentRto(FillMapUtility.getDocumentUploadRTO(selectedState, purCd));
-			commonDobj.setApplInwardOtherRto(FillMapUtility.getApplInwardOtherRto(selectedState, purCd));
-			commonDobj.setFeeExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
-			commonDobj.setTaxExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
-			boolean auth[] = FillMapUtility.getAdhaarAndMobAuthentication(selectedState, purCd);
-			commonDobj.setAadharAuthenticationCitizen(auth[0]);
-			commonDobj.setMobileAuthenticationCitizen(auth[1]);
-			commonDobj.setVerifyBankOnhypth(CommonServiceImpl.getHypthVerifyBank(selectedState, purCd));
-			flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
-			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
-			outcome = "redirectToCommonService";
+
+			commonDobj.setVerifyBankOnhypth(new CommonServiceImpl().getHypthVerifyBank(selectedState, purCd));
+			// flowRto = new PermitImpl().getRtoServiceFlow(selectedState,
+			// purCd, rtoFlowdobj);
+			// flowCitizen = new
+			// PermitImpl().getCitizenServiceFlow(selectedState, purCd,
+			// citizenFlow);
+			outcome = "redirectToHypothecationService";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_VEH_CONVERSION) {
+			convDobj.setCommonDobj(commonDobj);
+			convDobj.setReassignOrRetainNo(new CommonServiceImpl().getReassignNumberInConversion(selectedState));
+			list = new CommonServiceImpl().getConvertibleClasses();
+			outcome = "redirectToConversionOfVehicle";
 
 		}
 		return outcome;
@@ -323,6 +349,30 @@ public class LoginBean implements Serializable {
 
 	public void setCommonDobj(CommonDobj commonDobj) {
 		this.commonDobj = commonDobj;
+	}
+
+	public ConversionOfVehicleDobj getConvDobj() {
+		return convDobj;
+	}
+
+	public void setConvDobj(ConversionOfVehicleDobj convDobj) {
+		this.convDobj = convDobj;
+	}
+
+	public ConversionOfVehicleDobj getConversionDobj() {
+		return conversionDobj;
+	}
+
+	public void setConversionDobj(ConversionOfVehicleDobj conversionDobj) {
+		this.conversionDobj = conversionDobj;
+	}
+
+	public ArrayList<ConvertibleClasses> getList() {
+		return list;
+	}
+
+	public void setList(ArrayList<ConvertibleClasses> list) {
+		this.list = list;
 	}
 
 }

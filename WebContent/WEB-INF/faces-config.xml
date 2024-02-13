@@ -34,6 +34,17 @@
 			<from-outcome>redirectToCommonService</from-outcome>
 			<to-view-id>/CommonService.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>redirectToHypothecationService</from-outcome>
+			<to-view-id>/HypothecationService.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>redirectToConversionOfVehicle</from-outcome>
+			<to-view-id>/ConversionOfVehicle.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
+	
+	
+	
 </faces-config>
 

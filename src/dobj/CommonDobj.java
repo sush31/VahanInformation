@@ -12,7 +12,7 @@ public class CommonDobj {
 	public boolean aadharAuthenticationCitizen;
 	public boolean applInwardOtherRto;
 	public boolean verifyBankOnhypth;
-	public int purCd;
+	
 	
 	
 	public CommonDobj()
@@ -89,13 +89,7 @@ public class CommonDobj {
 		this.applInwardOtherRto = applInwardOtherRto;
 	}
 
-	public int getPurCd() {
-		return purCd;
-	}
-
-	public void setPurCd(int purCd) {
-		this.purCd = purCd;
-	}
+	
 
 	
 	
