@@ -42,6 +42,20 @@
 			<from-outcome>redirectToConversionOfVehicle</from-outcome>
 			<to-view-id>/ConversionOfVehicle.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>redirectToFitness</from-outcome>
+			<to-view-id>/Fitness.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>noc</from-outcome>
+			<to-view-id>/Noc.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>redirectToHsrp</from-outcome>
+			<to-view-id>/hsrp.xhtml</to-view-id>
+		</navigation-case>
+		
+		
 	</navigation-rule>
 	
 	

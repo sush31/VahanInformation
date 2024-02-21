@@ -1,5 +1,7 @@
 package dobj;
 
+import java.util.Map;
+
 public class TransferOfOwnershipDobj {
 
 	public boolean serviceRto;
@@ -14,8 +16,16 @@ public class TransferOfOwnershipDobj {
     public String transferOfOwnershipWithoutNoc;
 	public boolean transferOfOwnershipWithtNoc;
 	public boolean toRetention;
+	public Map<String,String> feesApplicable;
 	
 	
+	
+	public Map<String, String> getFeesApplicable() {
+		return feesApplicable;
+	}
+	public void setFeesApplicable(Map<String, String> feesApplicable) {
+		this.feesApplicable = feesApplicable;
+	}
 	public String getTransferOfOwnershipWithoutNoc() {
 		return transferOfOwnershipWithoutNoc;
 	}

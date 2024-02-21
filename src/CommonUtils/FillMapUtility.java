@@ -1,6 +1,8 @@
 package CommonUtils;
 
+import java.io.Reader;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,6 +18,7 @@ import bean.LoginBean;
 import databaseconnection.TableConstants;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManagerReadOnly;
+import dobj.CitizenServiceFlowDobj;
 import dobj.RenewalOfRegistrationDobj;
 import impl.PermitImpl;
 import oracle.net.aso.e;
@@ -364,6 +367,7 @@ public class FillMapUtility {
 		contextAwareCodeMeanings.put("<22>", FillMapUtility.getFuelDescr());
 		contextAwareCodeMeanings.put("<28>", FillMapUtility.fillPmtSubCatgMap());
 		contextAwareCodeMeanings.put("<38>", FillMapUtility.getVehicleCatgDescr());
+		contextAwareCodeMeanings.put("<action_cd>", FillMapUtility.fillActionCdDescr());
 		Map<String, String> vehTypeMap = new LinkedHashMap<String, String>();
 		Map<String, String> vehPurchasedAs = new LinkedHashMap<String, String>();
 		vehTypeMap.put("1", "Transport");
@@ -432,6 +436,36 @@ public class FillMapUtility {
 		return fuelDescr;
 
 	}
+	
+	public static Map<String, String> fillActionCdDescr() {
+
+		Map<String, String> actionDescrMap = new LinkedHashMap<String, String>();
+		String sql = "SELECT action_cd,descr FROM  " + TableList.TM_ACTION;
+		TransactionManagerReadOnly tmgr = null;
+		try {
+			tmgr = new TransactionManagerReadOnly("action code description");
+			PreparedStatement prstmt = tmgr.prepareStatement(sql);
+			RowSet rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+				actionDescrMap.put(String.valueOf(rs.getInt("action_cd")), rs.getString("descr"));
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			try {
+				if (tmgr != null) {
+					tmgr.release();
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		return actionDescrMap;
+
+	}
+	
+	
 
 	public static String getPurposeDescr(int purCd) {
 		String purposeDescr = null;
@@ -489,11 +523,10 @@ public class FillMapUtility {
 	}
 
 	public static boolean containsOnly61(String input) {
-		
+
 		Map<String, String> vmTaxSlabFields = getCodeDescr();
 		vmTaxSlabFields.remove("<61");
-		String patternString = vmTaxSlabFields.keySet().stream().map(Object::toString)
-				.collect(Collectors.joining("|"));
+		String patternString = vmTaxSlabFields.keySet().stream().map(Object::toString).collect(Collectors.joining("|"));
 
 		Pattern pattern = Pattern.compile(patternString);
 
@@ -743,8 +776,74 @@ public class FillMapUtility {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='REN'";
 		}
+
+		else if (purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_TEMP_VEHICLE
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_TEMP_REG) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='TMP'";
+		} 
+		else if (purCd == TableConstants.VM_TRANSACTION_MAST_DUP_RC) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='DUP'";
+		}
+		else if (purCd == TableConstants.VM_TRANSACTION_MAST_DUP_FC) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='DFC'";
+		}
+		
+		else if (purCd == TableConstants.VM_TRANSACTION_MAST_TO) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='TO'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_CHG_ADD) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='CA'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_VEH_CONVERSION) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='CON'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_VEH_ALTER) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='ALT'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_ADD_HYPO) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='HPA'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_REM_HYPO) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='HPT'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_HPC) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='HPC'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NOC) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='NOC'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_FIT_CERT) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='FIT'";
+		}
+		else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE_FITNESS) {
+				sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+						+ " where state_cd=? and action='NVF'";
+			
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_FRESH_RC) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='FRC'";
+		} else if (purCd == TableConstants.VM_MAST_RC_CANCELLATION) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='CRC'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NOC) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='NOC'";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NOC_CANCEL) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='CNO'";
+		}
+		else if(purCd==TableConstants.VM_TRANSACTION_CONVERSION_PAPER_RC_TO_SMARTCARD)
+		{
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='CRS'";
+		}
+
 		try {
-			tmgr = new TransactionManagerReadOnly("fetch dms");
+			tmgr = new TransactionManagerReadOnly("fetch fees");
 			ps = tmgr.prepareStatement(sql);
 			ps.setString(1, stateCd);
 			rs = tmgr.fetchDetachedRowSet();
@@ -1000,6 +1099,112 @@ public class FillMapUtility {
 			}
 		}
 		return isServiceCitizen;
+	}
+
+	public static ArrayList<CitizenServiceFlowDobj> getCitizenServiceFlow(String stateCd, int purCd,
+			CitizenServiceFlowDobj citizenFlow) {
+
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql1 = null;
+		ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
+		sql1 = "select flow_srno,action_cd,condition_formula,isbackward,auto_approval_allowed from "
+				+ TableList.TM_PURPOSE_ACTION_FLOW_CITIZEN + " where state_cd=? and pur_cd=? order by flow_srno";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch flow from Citizen");
+			ps = tmgr.prepareStatement(sql1);
+			ps.setString(1, stateCd);
+			ps.setInt(2, purCd);
+			rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+				CitizenServiceFlowDobj dobj = new CitizenServiceFlowDobj();
+				dobj.setFlow_srno(rs.getInt("flow_srno"));
+				dobj.setAction_cd((rs.getInt("action_cd")));
+				dobj.setAction_descr(getActionDescr(rs.getInt("action_cd")));
+				if (rs.getString("condition_formula").equalsIgnoreCase("true")) {
+					dobj.setCondition_formula(rs.getString("condition_formula"));
+				} else {
+					dobj.setCondition_formula(FillMapUtility.interpretExpression(rs.getString("condition_formula")));
+				}
+				dobj.setBackward(rs.getString("isbackward"));
+				dobj.setAutoapproval(rs.getBoolean("auto_approval_allowed"));
+				flowCitizen.add(dobj);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+
+			}
+		}
+		return flowCitizen;
+	}
+	public String getComplainDescr(int code)
+	{
+		String descr="";
+		String sql = "SELECT descr FROM  " + TableList.VM_BLACKLIST_NOTTRANSACTED+" where code=?";
+		TransactionManagerReadOnly tmgr = null;
+		try {
+			tmgr = new TransactionManagerReadOnly("complaint description");
+			PreparedStatement prstmt = tmgr.prepareStatement(sql);
+			prstmt.setInt(1,code);
+			RowSet rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+				descr=rs.getString("descr");
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			try {
+				if (tmgr != null) {
+					tmgr.release();
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		return descr;
+		
+	}
+	
+	public String getSubcomplainDescr(int code, Reader subcode)
+	{
+		String descr="";
+		String sql = "SELECT descr FROM  " + TableList.VM_BLACKLIST_NOTTRANSACTED_OTHERS+" where code=? and subcode=?";
+		TransactionManagerReadOnly tmgr = null;
+		try {
+			tmgr = new TransactionManagerReadOnly("sub complaint description");
+			PreparedStatement prstmt = tmgr.prepareStatement(sql);
+			prstmt.setInt(1,code);
+			prstmt.setCharacterStream(2,subcode);
+			RowSet rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+				descr=rs.getString("descr");
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			try {
+				if (tmgr != null) {
+					tmgr.release();
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		return descr;
+		
 	}
 
 }

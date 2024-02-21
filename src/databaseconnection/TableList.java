@@ -127,16 +127,11 @@ abstract public class TableList implements Serializable {
 	public static final String VA_RC_CANCEL = "va_rc_cancel";
 	public static final String VHA_RC_CANCEL = "vha_rc_cancel";
 	public static final String VT_RC_CANCEL = "vt_rc_cancel";
-	// Added By Nitin :12-may-2015
-	// Added By Afzal : 03 Feb-2015
 	public static final String TM_ACTION = "tm_action";
-	// Added By Afzal : 02 March-2015 for black listed vehicle
-	public static final String VT_BLACKLIST = "vt_blacklist";
-	public static final String VT_BLACKLIST_CHASSIS = "VT_BLACKLIST_CHASSIS";
-	public static final String VM_BLACKLIST = "VM_BLACKLIST";
-	public static final String VH_BLACKLIST_CHASSIS = "VH_BLACKLIST_CHASSIS";
-	public static final String VH_BLACKLIST = "VH_BLACKLIST";
-	// NAMAN INSERT THE TABLE
+	public static final String VM_BLACKLIST_NOTTRANSACTED="vm_blacklist_nottransacted";
+	public static final String VM_BLACKLIST_NOTTRANSACTED_OTHERS="vm_blacklist_nottransacted_others";
+	public static final String TM_CONFIGURATION_BLACKLIST="tm_configuration_blacklist";
+	
 
 	public static final String VT_OWNER = NEW_REG_SCHEMA + "VT_OWNER";
 	public static final String VIEW_VV_OWNER = NEW_REG_SCHEMA + "vv_owner";
@@ -209,6 +204,7 @@ abstract public class TableList implements Serializable {
 	public static final String VH_DOCUMENT_DSIGN = "vahan4.vh_document_digital_signed";
 	public static final String TM_CONFIGURATION_DIGITAL_SIGNED = "tm_configuration_digital_signed";
 	public static final String TM_CONFIGURATION_DMS = "tm_configuration_dms";
+	public static final String TM_CONFIGURATION_NOC= "tm_configuration_noc";
 	public static final String VC_ACTION_PURPOSE_MAP="dealer.vc_action_purpose_map";
 	public static final String TM_CONFIGURATION_OTP ="tm_configuration_otp";
 	// NAMAN INSERT THE TABLE
@@ -393,6 +389,7 @@ abstract public class TableList implements Serializable {
 	public static final String VT_TEMP_APPL_TRANSACTION_PERMIT = ONLINE_SCHEMA + "VT_TEMP_APPL_TRANSACTION";
 	public static final String VA_TEMP_PERMIT_APPL = ONLINE_SCHEMA + "VA_TEMP_PERMIT_APPL";
 	public static final String TM_PURPOSE_ACTION_FLOW = "tm_purpose_action_flow";
+	public static final String TM_PURPOSE_ACTION_FLOW_CITIZEN = ONLINE_SCHEMA+"tm_purpose_action_flow";
 	public static final String VM_FEEMAST = "vm_feemast";
 	public static final String VP_PERMIT_APPL_INWARDED_ONLINE = ONLINE_SCHEMA + "vp_permit_appl_inwarded_online";
 	public static final String VA_PERMIT_HOME_AUTH_APPL = ONLINE_SCHEMA + "va_permit_home_auth_appl";

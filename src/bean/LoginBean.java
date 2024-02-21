@@ -14,6 +14,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import javax.sql.RowSet;
 
+import org.apache.poi.xssf.model.Table;
+
 import CommonUtils.FillMapUtility;
 import databaseconnection.TableConstants;
 import databaseconnection.TableList;
@@ -22,13 +24,18 @@ import dobj.CitizenServiceFlowDobj;
 import dobj.CommonDobj;
 import dobj.ConversionOfVehicleDobj;
 import dobj.ConvertibleClasses;
+import dobj.FitnessDobj;
+import dobj.FitnessValidityDobj;
 import dobj.NewRegistrationDobj;
+import dobj.NottobeTransactedDobj;
 import dobj.PermitDobj;
 import dobj.RenewalOfRegistrationDobj;
 import dobj.RtoServiceFlowDobj;
 import dobj.TransferOfOwnershipDobj;
 import impl.CommonServiceImpl;
+import impl.FitnessImpl;
 import impl.NewRegistrationImpl;
+import impl.NottobeTransactedImpl;
 import impl.PermitImpl;
 import impl.RenewalOfRegistrationImpl;
 import impl.TransferOfOwnershipImpl;
@@ -59,7 +66,11 @@ public class LoginBean implements Serializable {
 	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
 	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
 	ConversionOfVehicleDobj conversionDobj = new ConversionOfVehicleDobj();
+	NottobeTransactedDobj nottobeTransactedDobj=new NottobeTransactedDobj();
 	ArrayList<ConvertibleClasses> list = new ArrayList<>();
+	FitnessDobj fitnessDobj = new FitnessDobj();
+	ArrayList<FitnessValidityDobj> fitnessValidityList = new ArrayList<>();
+	
 
 	@PostConstruct
 	public void init() {
@@ -141,13 +152,14 @@ public class LoginBean implements Serializable {
 		commonDobj.setFeeExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
 		commonDobj.setTaxExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
 		commonDobj.setUploadDocumentRto(FillMapUtility.getDocumentUploadRTO(selectedState, purCd));
+		commonDobj.setFeesApplicable(FillMapUtility.getFeesApplicableForNewRegn(selectedState, purCd));
 		flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
 		if (commonDobj.isServiceCitizen() == true) {
 			commonDobj.setUploadDocumentCitizen(FillMapUtility.getDocumentUploadCitizen(selectedState, purCd));
 			boolean auth[] = FillMapUtility.getAdhaarAndMobAuthentication(selectedState, purCd);
 			commonDobj.setAadharAuthenticationCitizen(auth[0]);
 			commonDobj.setMobileAuthenticationCitizen(auth[1]);
-			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
+			flowCitizen = FillMapUtility.getCitizenServiceFlow(selectedState, purCd, citizenFlow);
 		}
 
 		if (purCd == TableConstants.VM_PMT_FRESH_PUR_CD || purCd == TableConstants.VM_PMT_APPLICATION_PUR_CD
@@ -166,14 +178,16 @@ public class LoginBean implements Serializable {
 				|| purCd == TableConstants.VM_PMT_REPLACE_VEH_PUR_CD) {
 
 			permitdobj = new PermitImpl().getPermitServiceAttributes(selectedState, purCd, permitdobj);
+			flowCitizen = new PermitImpl().getCitizenServiceFlow(selectedState, purCd, citizenFlow);
 			outcome = "redirectToPermit";
 
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE
-				|| purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE) {
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_VEHICLE
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_TEMP_REG
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_DEALER_NEW_TEMP_VEHICLE) {
 
 			newregndobj = new NewRegistrationImpl().getNewRegistrationAttributes(selectedState, newregndobj);
-			// flowRto = new PermitImpl().getRtoServiceFlow(selectedState,
-			// purCd, rtoFlowdobj);
+
 			outcome = "redirectToNewregistration";
 
 		}
@@ -182,11 +196,6 @@ public class LoginBean implements Serializable {
 
 			renewalRegDobj = new RenewalOfRegistrationImpl().getRenewalRegistrationAttributes(selectedState,
 					renewalRegDobj);
-			// flowRto = new PermitImpl().getRtoServiceFlow(selectedState,
-			// purCd, rtoFlowdobj);
-			// flowCitizen = new
-			// PermitImpl().getCitizenServiceFlow(selectedState, purCd,
-			// citizenFlow);
 			outcome = "redirectToRenewalRegistration";
 
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_TO) {
@@ -202,31 +211,33 @@ public class LoginBean implements Serializable {
 			boolean auth1[] = FillMapUtility.getAdhaarAndMobAuthentication(selectedState, purCd);
 			transferOwnershipDobj.setAadharAuthenticationCitizen(auth1[0]);
 			transferOwnershipDobj.setMobileAuthenticationCitizen(auth1[1]);
+			transferOwnershipDobj.setFeesApplicable(FillMapUtility.getFeesApplicableForNewRegn(selectedState, purCd));
 			transferOwnershipDobj = new TransferOfOwnershipImpl().getTOAttributes(transferOwnershipDobj);
-			// flowRto = new PermitImpl().getRtoServiceFlow(selectedState,
-			// purCd, rtoFlowdobj);
-			// flowCitizen = new
-			// PermitImpl().getCitizenServiceFlow(selectedState, purCd,
-			// citizenFlow);
-
 			outcome = "redirectToTransferOfOwnership";
 
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_CHG_ADD
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_FRESH_RC
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_DUP_RC
-				|| purCd == TableConstants.VM_TRANSACTION_MAST_VEH_ALTER) {
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_VEH_ALTER
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_RC_PARTICULARS
+				|| purCd == TableConstants.VM_MAST_RC_SURRENDER || purCd == TableConstants.VM_MAST_RC_RELEASE
+				|| purCd == TableConstants.VM_MAST_RC_CANCELLATION || purCd == TableConstants.VM_TRANSACTION_MAST_DUP_RC
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_DUP_FC
+				|| purCd == TableConstants.VM_TRANSACTION_CONVERSION_PAPER_RC_TO_SMARTCARD
+				|| purCd == TableConstants.VM_TRANSACTION_ADD_MODIFY_NOMINEE) {
 
 			outcome = "redirectToCommonService";
+
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_DUP_HSRP) {
+			commonDobj.setHsrp(new CommonServiceImpl().getHsrp(selectedState));
+			commonDobj.setOldhsrp(new CommonServiceImpl().getOldHsrp(selectedState));
+			outcome = "redirectToHsrp";
 
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_ADD_HYPO
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_REM_HYPO
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_HPC) {
 
 			commonDobj.setVerifyBankOnhypth(new CommonServiceImpl().getHypthVerifyBank(selectedState, purCd));
-			// flowRto = new PermitImpl().getRtoServiceFlow(selectedState,
-			// purCd, rtoFlowdobj);
-			// flowCitizen = new
-			// PermitImpl().getCitizenServiceFlow(selectedState, purCd,
-			// citizenFlow);
 			outcome = "redirectToHypothecationService";
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_VEH_CONVERSION) {
 			convDobj.setCommonDobj(commonDobj);
@@ -234,6 +245,22 @@ public class LoginBean implements Serializable {
 			list = new CommonServiceImpl().getConvertibleClasses();
 			outcome = "redirectToConversionOfVehicle";
 
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_FIT_CERT
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE_FITNESS) {
+			fitnessDobj.setCommonDobj(commonDobj);
+			new FitnessImpl().getFitnessAttributes(selectedState, fitnessDobj);
+			fitnessValidityList = new FitnessImpl().getFitnessValidityList(selectedState);
+			outcome = "redirectToFitness";
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NOC
+				|| purCd == TableConstants.VM_TRANSACTION_MAST_NOC_CANCEL) {
+			commonDobj.setNocAllowForSameState(new CommonServiceImpl().nocRequiredForSameState(selectedState));
+			outcome = "noc";
+		}
+		else if(purCd==TableConstants.VM_TRANSACTION_NOT_TO_BE_TRANSACTED)
+		{
+			nottobeTransactedDobj.setAllowedConditionFormulaForAction(new NottobeTransactedImpl().getAllowedConditionFormulaDescrForAction(selectedState));
+			nottobeTransactedDobj.setAllowedConditionFormulaForPurpose(new NottobeTransactedImpl().getAllowedConditionFormulaDescrForPurpose(selectedState));
+			
 		}
 		return outcome;
 
@@ -373,6 +400,22 @@ public class LoginBean implements Serializable {
 
 	public void setList(ArrayList<ConvertibleClasses> list) {
 		this.list = list;
+	}
+
+	public FitnessDobj getFitnessDobj() {
+		return fitnessDobj;
+	}
+
+	public void setFitnessDobj(FitnessDobj fitnessDobj) {
+		this.fitnessDobj = fitnessDobj;
+	}
+
+	public ArrayList<FitnessValidityDobj> getFitnessValidityList() {
+		return fitnessValidityList;
+	}
+
+	public void setFitnessValidityList(ArrayList<FitnessValidityDobj> fitnessValidityList) {
+		this.fitnessValidityList = fitnessValidityList;
 	}
 
 }

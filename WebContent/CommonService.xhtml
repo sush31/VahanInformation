@@ -60,6 +60,25 @@ and open the template in the editor.
 		</p:dataTable>
 		<br />
 		<br />
+		
+		<p:dataTable
+			value="#{loginBean.commonDobj.feesApplicable.entrySet()}" var="fees"
+			id="feestable">
+			<f:facet name="header">
+				<p:outputLabel
+					value="Fees applicable for  #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
+			</f:facet>
+			<p:column>
+				<f:facet name="header">Purpose</f:facet>
+           	                   #{fees.key}
+           
+                             </p:column>
+			<p:column>
+				<f:facet name="header">Condition</f:facet>
+                               #{fees.value}
+                              </p:column>
+             
+         </p:dataTable>
 
 
 		<p:dataTable value="#{loginBean.flowRto}" var="flowrto"
@@ -106,13 +125,13 @@ and open the template in the editor.
 			<p:column headerText="Is Backward">
 				<p:outputLabel value="#{flowcitizen.backward}" />
 			</p:column>
+			<p:column headerText="auto approval allowed">
+				<p:outputLabel value="#{flowcitizen.autoapproval}" />
+			</p:column>
 			<p:column headerText="Conditon Formula Description">
 				<p:outputLabel value="#{flowcitizen.condition_formula}" />
 			</p:column>
-			<p:column headerText="Move to Vahan4">
-				<p:outputLabel value="#{flowcitizen.move_to_vahan4}" />
-			</p:column>
-
+			
 		</p:dataTable>
 		<br />
 		<br />

@@ -8,6 +8,7 @@ public class CitizenServiceFlowDobj {
 	private boolean move_to_vahan4;
 	private String action_descr;
 	private String backward;
+	private boolean autoapproval;
 	public int getFlow_srno() {
 		return flow_srno;
 	}
@@ -45,6 +46,13 @@ public class CitizenServiceFlowDobj {
 	public void setBackward(String backward) {
 		this.backward = backward;
 	}
+	public boolean isAutoapproval() {
+		return autoapproval;
+	}
+	public void setAutoapproval(boolean autoapproval) {
+		this.autoapproval = autoapproval;
+	}
+	
 	
 	
 	

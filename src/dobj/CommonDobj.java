@@ -1,10 +1,13 @@
 package dobj;
 
+import java.util.Map;
+
 public class CommonDobj {
 
 	public boolean serviceRto;
 	public boolean serviceCitizen;
 	public String feeExempt;
+	public Map<String,String> feesApplicable;
 	public String taxExempt;
 	public boolean uploadDocumentRto;
 	public boolean uploadDocumentCitizen;
@@ -12,6 +15,9 @@ public class CommonDobj {
 	public boolean aadharAuthenticationCitizen;
 	public boolean applInwardOtherRto;
 	public boolean verifyBankOnhypth;
+	public boolean nocAllowForSameState;
+	public boolean hsrp;
+	public boolean oldhsrp;
 	
 	
 	
@@ -20,6 +26,30 @@ public class CommonDobj {
 		
 	}
 	
+	
+	
+	public boolean isNocAllowForSameState() {
+		return nocAllowForSameState;
+	}
+
+
+
+	public void setNocAllowForSameState(boolean nocAllowForSameState) {
+		this.nocAllowForSameState = nocAllowForSameState;
+	}
+
+
+
+	public Map<String, String> getFeesApplicable() {
+		return feesApplicable;
+	}
+
+
+	public void setFeesApplicable(Map<String, String> feesApplicable) {
+		this.feesApplicable = feesApplicable;
+	}
+
+
 	public boolean isServiceRto() {
 		return serviceRto;
 	}
@@ -88,6 +118,33 @@ public class CommonDobj {
 	public void setApplInwardOtherRto(boolean applInwardOtherRto) {
 		this.applInwardOtherRto = applInwardOtherRto;
 	}
+
+
+
+	public boolean isHsrp() {
+		return hsrp;
+	}
+
+
+
+	public void setHsrp(boolean hsrp) {
+		this.hsrp = hsrp;
+	}
+
+
+
+	public boolean isOldhsrp() {
+		return oldhsrp;
+	}
+
+
+
+	public void setOldhsrp(boolean oldhsrp) {
+		this.oldhsrp = oldhsrp;
+	}
+	
+	
+	
 
 	
 

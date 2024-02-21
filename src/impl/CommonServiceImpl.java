@@ -149,6 +149,117 @@ public class CommonServiceImpl {
 		return reassignOrReattain;
 		
 	}
+	public  boolean nocRequiredForSameState(String stateCd)
+	{
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		boolean noc=false;
+		
+		sql="select allow_for_same_state from " + TableList.TM_CONFIGURATION_NOC+" where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch convertible classes details ");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+				noc=rs.getBoolean("allow_for_same_state");
+			}
+		}
+
+		 catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+
+		}
+		return noc;
+		
+	}
+	
+	public  boolean getHsrp(String stateCd)
+	{
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		boolean hsrp=false;
+		
+		sql="select distinct hsrp from vm_smart_card_hsrp where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch hsrp ");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+				hsrp=hsrp || rs.getBoolean("hsrp");
+			}
+		}
+
+		 catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+
+		}
+		return hsrp;
+		
+	}
+	public  boolean getOldHsrp(String stateCd)
+	{
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		boolean hsrp=false;
+		
+		sql="select distinct old_veh_hsrp from vm_smart_card_hsrp where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch hsrp ");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+				hsrp=hsrp || rs.getBoolean("old_veh_hsrp");
+			}
+		}
+
+		 catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+
+		}
+		return hsrp;
+		
+	}
+
+	
 	
 	
 }
