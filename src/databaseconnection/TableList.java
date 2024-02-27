@@ -128,6 +128,7 @@ abstract public class TableList implements Serializable {
 	public static final String VHA_RC_CANCEL = "vha_rc_cancel";
 	public static final String VT_RC_CANCEL = "vt_rc_cancel";
 	public static final String TM_ACTION = "tm_action";
+	public static final String VM_BLACKLIST="vm_blacklist";
 	public static final String VM_BLACKLIST_NOTTRANSACTED="vm_blacklist_nottransacted";
 	public static final String VM_BLACKLIST_NOTTRANSACTED_OTHERS="vm_blacklist_nottransacted_others";
 	public static final String TM_CONFIGURATION_BLACKLIST="tm_configuration_blacklist";

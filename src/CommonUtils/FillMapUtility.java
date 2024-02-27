@@ -436,18 +436,18 @@ public class FillMapUtility {
 		return fuelDescr;
 
 	}
-	
+
 	public static Map<String, String> fillActionCdDescr() {
 
 		Map<String, String> actionDescrMap = new LinkedHashMap<String, String>();
-		String sql = "SELECT action_cd,descr FROM  " + TableList.TM_ACTION;
+		String sql = "SELECT action_cd,action_descr FROM  " + TableList.TM_ACTION;
 		TransactionManagerReadOnly tmgr = null;
 		try {
 			tmgr = new TransactionManagerReadOnly("action code description");
 			PreparedStatement prstmt = tmgr.prepareStatement(sql);
 			RowSet rs = tmgr.fetchDetachedRowSet();
 			while (rs.next()) {
-				actionDescrMap.put(String.valueOf(rs.getInt("action_cd")), rs.getString("descr"));
+				actionDescrMap.put(String.valueOf(rs.getInt("action_cd")), rs.getString("action_descr"));
 			}
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
@@ -464,8 +464,6 @@ public class FillMapUtility {
 		return actionDescrMap;
 
 	}
-	
-	
 
 	public static String getPurposeDescr(int purCd) {
 		String purposeDescr = null;
@@ -542,25 +540,27 @@ public class FillMapUtility {
 	}
 
 	public static String interpretExpression(String expression) {
-		Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
-		vmtaxslabfieldsmap = FillMapUtility.getCodeDescr();
-		vmtaxslabfieldsmap.remove("<46>");
-		vmtaxslabfieldsmap.put("<46>", "transport type");
+//		Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
+//		vmtaxslabfieldsmap = FillMapUtility.getCodeDescr();
+//		vmtaxslabfieldsmap.remove("<46>");
+//		vmtaxslabfieldsmap.put("<46>", "transport type");
+//		Map<String, Map<String, String>> contextAwareCodeMeanings = FillMapUtility
+////				.fetchContextAwareCodeMeaningsFromDatabase();
 		Map<String, String> codeMeanings = new LinkedHashMap<String, String>();
+		
 		StringBuffer result = new StringBuffer();
 		expression = expression.trim();
-		Map<String, Map<String, String>> contextAwareCodeMeanings = FillMapUtility
-				.fetchContextAwareCodeMeaningsFromDatabase();
-		String patternString = "<(\\d+)>|'([^']+)'|(\\b\\d+\\b)";
+     	//String patternString = "<(\\d+)>|'([^']+)'|(\\b\\d+\\b)";
+		String patternString ="<([^>]+)>|'([^']+)'|(\\b\\d+\\b)";
 		Pattern pattern = Pattern.compile(patternString);
 		Matcher matcher = pattern.matcher(expression);
 		while (matcher.find()) {
 			String code = matcher.group(); // Check if the code inside angle
 											// brackets is present
 			if (code.startsWith("<")) {
-
-				codeMeanings = contextAwareCodeMeanings.get(code);
-				String contextreplacement = (String) vmtaxslabfieldsmap.getOrDefault(code, code);
+			
+				codeMeanings = LoginBean.contextAwareCodeMeanings.get(code);
+				String contextreplacement = (String) LoginBean.vmtaxslabfieldsmap.getOrDefault(code, code);
 				matcher.appendReplacement(result, Matcher.quoteReplacement(contextreplacement));
 
 			}
@@ -781,16 +781,14 @@ public class FillMapUtility {
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_TEMP_REG) {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='TMP'";
-		} 
-		else if (purCd == TableConstants.VM_TRANSACTION_MAST_DUP_RC) {
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_DUP_RC) {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='DUP'";
-		}
-		else if (purCd == TableConstants.VM_TRANSACTION_MAST_DUP_FC) {
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_DUP_FC) {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='DFC'";
 		}
-		
+
 		else if (purCd == TableConstants.VM_TRANSACTION_MAST_TO) {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='TO'";
@@ -818,11 +816,10 @@ public class FillMapUtility {
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_FIT_CERT) {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='FIT'";
-		}
-		else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE_FITNESS) {
-				sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
-						+ " where state_cd=? and action='NVF'";
-			
+		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NEW_VEHICLE_FITNESS) {
+			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+					+ " where state_cd=? and action='NVF'";
+
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_FRESH_RC) {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='FRC'";
@@ -835,9 +832,7 @@ public class FillMapUtility {
 		} else if (purCd == TableConstants.VM_TRANSACTION_MAST_NOC_CANCEL) {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='CNO'";
-		}
-		else if(purCd==TableConstants.VM_TRANSACTION_CONVERSION_PAPER_RC_TO_SMARTCARD)
-		{
+		} else if (purCd == TableConstants.VM_TRANSACTION_CONVERSION_PAPER_RC_TO_SMARTCARD) {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='CRS'";
 		}
@@ -1148,63 +1143,7 @@ public class FillMapUtility {
 		}
 		return flowCitizen;
 	}
-	public String getComplainDescr(int code)
-	{
-		String descr="";
-		String sql = "SELECT descr FROM  " + TableList.VM_BLACKLIST_NOTTRANSACTED+" where code=?";
-		TransactionManagerReadOnly tmgr = null;
-		try {
-			tmgr = new TransactionManagerReadOnly("complaint description");
-			PreparedStatement prstmt = tmgr.prepareStatement(sql);
-			prstmt.setInt(1,code);
-			RowSet rs = tmgr.fetchDetachedRowSet();
-			if (rs.next()) {
-				descr=rs.getString("descr");
-			}
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		} finally {
-			try {
-				if (tmgr != null) {
-					tmgr.release();
-				}
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		}
+	// for blacklist
 
-		return descr;
-		
-	}
 	
-	public String getSubcomplainDescr(int code, Reader subcode)
-	{
-		String descr="";
-		String sql = "SELECT descr FROM  " + TableList.VM_BLACKLIST_NOTTRANSACTED_OTHERS+" where code=? and subcode=?";
-		TransactionManagerReadOnly tmgr = null;
-		try {
-			tmgr = new TransactionManagerReadOnly("sub complaint description");
-			PreparedStatement prstmt = tmgr.prepareStatement(sql);
-			prstmt.setInt(1,code);
-			prstmt.setCharacterStream(2,subcode);
-			RowSet rs = tmgr.fetchDetachedRowSet();
-			if (rs.next()) {
-				descr=rs.getString("descr");
-			}
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		} finally {
-			try {
-				if (tmgr != null) {
-					tmgr.release();
-				}
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		}
-
-		return descr;
-		
-	}
-
 }

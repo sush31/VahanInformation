@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,6 +71,8 @@ public class LoginBean implements Serializable {
 	ArrayList<ConvertibleClasses> list = new ArrayList<>();
 	FitnessDobj fitnessDobj = new FitnessDobj();
 	ArrayList<FitnessValidityDobj> fitnessValidityList = new ArrayList<>();
+	public static Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
+	public static Map<String, Map<String, String>> contextAwareCodeMeanings;
 	
 
 	@PostConstruct
@@ -77,8 +80,12 @@ public class LoginBean implements Serializable {
 
 		session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
 		state_list = getStateList();
-		session.setAttribute("state", selectedState);
-
+		vmtaxslabfieldsmap = FillMapUtility.getCodeDescr();
+		vmtaxslabfieldsmap.remove("<46>");
+		vmtaxslabfieldsmap.put("<46>", "transport type");
+		contextAwareCodeMeanings = FillMapUtility
+				.fetchContextAwareCodeMeaningsFromDatabase();
+		
 	}
 
 	public List<SelectItem> getStateList() {
