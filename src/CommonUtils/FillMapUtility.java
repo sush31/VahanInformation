@@ -540,12 +540,7 @@ public class FillMapUtility {
 	}
 
 	public static String interpretExpression(String expression) {
-//		Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
-//		vmtaxslabfieldsmap = FillMapUtility.getCodeDescr();
-//		vmtaxslabfieldsmap.remove("<46>");
-//		vmtaxslabfieldsmap.put("<46>", "transport type");
-//		Map<String, Map<String, String>> contextAwareCodeMeanings = FillMapUtility
-////				.fetchContextAwareCodeMeaningsFromDatabase();
+
 		Map<String, String> codeMeanings = new LinkedHashMap<String, String>();
 		
 		StringBuffer result = new StringBuffer();

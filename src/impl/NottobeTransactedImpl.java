@@ -11,12 +11,13 @@ import java.util.regex.Pattern;
 import javax.sql.RowSet;
 
 import CommonUtils.FillMapUtility;
+import bean.LoginBean;
 import databaseconnection.TableList;
 import databaseconnection.TransactionManagerReadOnly;
 
 public class NottobeTransactedImpl {
 	static Map<String, String> complaintDescrMap = new LinkedHashMap<String, String>();
-	static Map<Integer, Map<Reader, String>> subcomplaintDescrMap = new LinkedHashMap<Integer, Map<Reader, String>>();
+	static Map<Integer, Map<String, String>> subcomplaintDescrMap = new LinkedHashMap<Integer, Map<String, String>>();
 
 	public String getAllowedConditionFormulaDescrForAction(String stateCd) {
 		String descr = "";
@@ -78,7 +79,7 @@ public class NottobeTransactedImpl {
 
 	}
 
-	public static Map<Integer, Map<Reader, String>> fillComplainDescr() {
+	public static Map<Integer, Map<String, String>> fillComplainDescr() {
 
 		String sql = "SELECT code,descr FROM  " + TableList.VM_BLACKLIST;
 		TransactionManagerReadOnly tmgr = null;
@@ -106,7 +107,7 @@ public class NottobeTransactedImpl {
 
 	}
 
-	public void fillSubcomplainDescr(Map<Integer, Map<Reader, String>> subcomplaintDescrMap, int code) {
+	public void fillSubcomplainDescr(Map<Integer, Map<String, String>> subcomplaintDescrMap, int code) {
 
 		String sql = "select subcode,descr from " + TableList.VM_BLACKLIST_NOTTRANSACTED_OTHERS + " where code=?";
 		TransactionManagerReadOnly tmgr = null;
@@ -115,9 +116,9 @@ public class NottobeTransactedImpl {
 			PreparedStatement prstmt = tmgr.prepareStatement(sql);
 			prstmt.setInt(1, code);
 			RowSet rs = tmgr.fetchDetachedRowSet();
-			Map<Reader, String> subcomplaint = new LinkedHashMap<>();
+			Map<String, String> subcomplaint = new LinkedHashMap<>();
 			while (rs.next()) {
-				subcomplaint.put(rs.getCharacterStream("subcode"), rs.getString("descr"));
+				subcomplaint.put(rs.getString("subcode"), rs.getString("descr"));
 			}
 			subcomplaintDescrMap.put(code, subcomplaint);
 
@@ -136,66 +137,65 @@ public class NottobeTransactedImpl {
 	}
 
 	public static String interpretNottobetransactedExpression(String expression) {
-		StringBuffer translatedExpression = new StringBuffer();
-		String replacement = "";
-		Map<Integer, Map<Reader, String>> subcomplaintDescrMap = new LinkedHashMap<Integer, Map<Reader, String>>();
+		StringBuffer result = new StringBuffer();
+		String index = "";
+		String replacement="";
+		Map<Integer, Map<String, String>> subcomplaintDescrMap = new LinkedHashMap<Integer, Map<String, String>>();
 		Map<String, Map<String, String>> codeMeanings = new HashMap<>();
+		Map<String, String> context = new HashMap<>();
+		Map<?, String> meanings = new HashMap<>();
+		context.put("<61>", "PURPOSE");
+		context.put("<COMPLAIN_TYPE>", "COMPLAIN TYPE");
+		context.put("SUB_COMPLAIN_TYPE", "SUB COMPLAIN TYPE");
 		subcomplaintDescrMap = fillComplainDescr();
 		codeMeanings.put("<61>", FillMapUtility.fillPurposeCodeMap());
 		codeMeanings.put("<COMPLAIN_TYPE>", complaintDescrMap);
-		subcomplaintDescrMap = fillComplainDescr();
-		String patternString = "<(.*?)> in\\((.*?)\\)";
+		//String patternString = "<(.*?)> in\\((.*?)\\)";
+		//String patternString ="<(\\w+)>\\s+in\\((\\d+)\\)";
+		String patternString="<(\\w+)>|'(\\w)'|(\\d+)";
 		Pattern pattern = Pattern.compile(patternString);
 		Matcher matcher = pattern.matcher(expression);
 		while (matcher.find()) {
+		
+			String code = matcher.group();
+			String val=matcher.group(1);
+			String key = matcher.group(2);
 
-			String code = matcher.group(1);
-			String values = matcher.group(2);
-			// Retrieve relevant from the map
-			if (code.equalsIgnoreCase("COMPLAIN_TYPE")) {
-				replacement = "COMPLAIN TYPE";
-			} else if (code.equalsIgnoreCase("SUB_COMPLAIN_TYPE")) {
-				replacement = "SUB COMPLAIN TYPE";
-			} else if (code.equals("61")) {
-				replacement = "PURPOSE";
-			}
-			matcher.appendReplacement(translatedExpression, Matcher.quoteReplacement(replacement));
-			Map<String, String> meanings = codeMeanings.get("<" + code + ">");
-			if (meanings != null) {
-				String[] valueArray = values.split(",");
-				for (String value : valueArray) {
-					String meaning = meanings.get(value.trim());
-					if (meaning != null) {
-						// If the code is <SUB_COMPLAIN_TYPE>, dynamically fetch
-						// its meaning based on <COMPLAIN_TYPE>
-						if ("<SUB_COMPLAIN_TYPE>".equals("<" + code + ">")) {
-							String complainType = getCodeValue(expression, "<COMPLAIN_TYPE>");
-							if (complainType != null) {
-								// Simulate dynamic fetching of sub complain
-								// type meaning based on complain type
-								meaning = fetchSubComplainTypeMeaning(complainType, value.trim());
-							}
-						}
-						// Replace code with its meaning
-						matcher.appendReplacement(translatedExpression, meaning);
-					}
+			if (code.startsWith("<")) {
+				String contextreplacement = context.getOrDefault(code, code);
+				if (code.equals("<61>") || code.equals("<COMPLAIN_TYPE>")) {
+					meanings = codeMeanings.get(code);
+					
 				}
+				if (code.equals("<SUB_COMPLAIN_TYPE>")) {
+					meanings = subcomplaintDescrMap.get(Integer.parseInt(index));
+
+				}
+
+				matcher.appendReplacement(result, Matcher.quoteReplacement(contextreplacement));
+
 			}
 
-			matcher.appendTail(translatedExpression);
-		}
-		return translatedExpression.toString();
+			else {
+				
+				if (meanings != null) {
+					index=code;
+					replacement = (String) meanings.getOrDefault(code, code);
+				} else {
+					replacement = code;
+				}
+				matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
 
+			}
+			
+			System.out.println(result);
+
+		}
+		matcher.appendTail(result);
+		return result.toString();
 	}
 
-	private static String getCodeValue(String expression, String code) {
-		Pattern pattern = Pattern.compile(code + " in\\((.*?)\\)");
-		Matcher matcher = pattern.matcher(expression);
-		if (matcher.find()) {
-			return matcher.group(1).trim();
-		}
-		return null;
-	}
+	
 
 	private static String fetchSubComplainTypeMeaning(String complainType, String subComplainType) {
 		return (subcomplaintDescrMap.get(complainType)).get(subComplainType);
