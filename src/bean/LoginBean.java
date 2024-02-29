@@ -83,6 +83,7 @@ public class LoginBean implements Serializable {
 		vmtaxslabfieldsmap = FillMapUtility.getCodeDescr();
 		vmtaxslabfieldsmap.remove("<46>");
 		vmtaxslabfieldsmap.put("<46>", "transport type");
+		vmtaxslabfieldsmap.put("<action_cd>", "action");
 		contextAwareCodeMeanings = FillMapUtility
 				.fetchContextAwareCodeMeaningsFromDatabase();
 		
@@ -264,9 +265,11 @@ public class LoginBean implements Serializable {
 			outcome = "noc";
 		}
 		else if(purCd==TableConstants.VM_TRANSACTION_NOT_TO_BE_TRANSACTED)
-		{
+		{   
+			nottobeTransactedDobj.setCommonDobj(commonDobj);
 			nottobeTransactedDobj.setAllowedConditionFormulaForAction(new NottobeTransactedImpl().getAllowedConditionFormulaDescrForAction(selectedState));
 			nottobeTransactedDobj.setAllowedConditionFormulaForPurpose(new NottobeTransactedImpl().getAllowedConditionFormulaDescrForPurpose(selectedState));
+			return"NotToBeTransacted";
 			
 		}
 		return outcome;
@@ -424,5 +427,14 @@ public class LoginBean implements Serializable {
 	public void setFitnessValidityList(ArrayList<FitnessValidityDobj> fitnessValidityList) {
 		this.fitnessValidityList = fitnessValidityList;
 	}
+
+	public NottobeTransactedDobj getNottobeTransactedDobj() {
+		return nottobeTransactedDobj;
+	}
+
+	public void setNottobeTransactedDobj(NottobeTransactedDobj nottobeTransactedDobj) {
+		this.nottobeTransactedDobj = nottobeTransactedDobj;
+	}
+	
 
 }

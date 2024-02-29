@@ -2,8 +2,9 @@ package dobj;
 
 public class NottobeTransactedDobj {
 
-	String allowedConditionFormulaForAction;
-	String allowedConditionFormulaForPurpose;
+	private String allowedConditionFormulaForAction;
+	private String allowedConditionFormulaForPurpose;
+	private CommonDobj commonDobj;
 	
 	public String getAllowedConditionFormulaForAction() {
 		return allowedConditionFormulaForAction;
@@ -17,6 +18,14 @@ public class NottobeTransactedDobj {
 	public void setAllowedConditionFormulaForPurpose(String allowedConditionFormulaForPurpose) {
 		this.allowedConditionFormulaForPurpose = allowedConditionFormulaForPurpose;
 	}
+	public CommonDobj getCommonDobj() {
+		return commonDobj;
+	}
+	public void setCommonDobj(CommonDobj commonDobj) {
+		this.commonDobj = commonDobj;
+	}
+	
+	
 	
 	
 	

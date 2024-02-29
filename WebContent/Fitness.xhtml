@@ -66,6 +66,21 @@ and open the template in the editor.
 				<p:outputLabel value="#{item.newVehFitness}" />
 			</p:column>
 			
+			<p:column headerText="Whether fitness revoke is allowed?">
+				<p:outputLabel value="#{item.fitnessRevokeAllowed}" />
+			</p:column>
+			
+			<p:column headerText="No. of days allowed for fitness revoke">
+				<p:outputLabel value="#{item.fitnessRevokeAllowedDays}" />
+			</p:column>
+			
+			<p:column headerText="fitness allowed after hsrp">
+				<p:outputLabel value="#{item.fcAfterHsrp}" />
+			</p:column>
+			
+			<p:column headerText="grace days for failed fitness">
+				<p:outputLabel value="#{item.graceDays}" />
+			</p:column>
 			
 			
 		</p:dataTable>
@@ -80,17 +95,26 @@ and open the template in the editor.
 				<p:outputLabel
 					value="Fitness Validity" />
 			</f:facet>
-			<p:column headerText="New Value">
+			<p:column headerText="New Value(Duration for which fitness is issued for first time)">
 				<p:outputLabel value="#{fitnesslist.newVal}" />
 			</p:column>
 			
-			<p:column headerText="New Value">
+			<p:column headerText="Renew Value (Duration for which fitness is renewed)">
 				<p:outputLabel value="#{fitnesslist.renewVal}" />
 			</p:column>
+			
+			
+			<p:column headerText="Mode of time duration(one time/monthy/yearly etc)">
+			<p:outputLabel value="#{fitnesslist.periodmod}" />
+			</p:column>
+			
+			
 			
 			<p:column headerText="condition">
 				<p:outputLabel value="#{fitnesslist.condition}" />
 			</p:column>
+			
+			
 			</p:dataTable>
 	<!--  fitness validity table ends-->
 			

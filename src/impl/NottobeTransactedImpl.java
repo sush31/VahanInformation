@@ -139,7 +139,7 @@ public class NottobeTransactedImpl {
 	public static String interpretNottobetransactedExpression(String expression) {
 		StringBuffer result = new StringBuffer();
 		String index = "";
-		String replacement="";
+		String replacement = "";
 		Map<Integer, Map<String, String>> subcomplaintDescrMap = new LinkedHashMap<Integer, Map<String, String>>();
 		Map<String, Map<String, String>> codeMeanings = new HashMap<>();
 		Map<String, String> context = new HashMap<>();
@@ -150,22 +150,22 @@ public class NottobeTransactedImpl {
 		subcomplaintDescrMap = fillComplainDescr();
 		codeMeanings.put("<61>", FillMapUtility.fillPurposeCodeMap());
 		codeMeanings.put("<COMPLAIN_TYPE>", complaintDescrMap);
-		//String patternString = "<(.*?)> in\\((.*?)\\)";
-		//String patternString ="<(\\w+)>\\s+in\\((\\d+)\\)";
-		String patternString="<(\\w+)>|'(\\w)'|(\\d+)";
+		// String patternString = "<(.*?)> in\\((.*?)\\)";
+		// String patternString ="<(\\w+)>\\s+in\\((\\d+)\\)";
+		String patternString = "<(\\w+)>|'(\\w)'|(\\d+)";
 		Pattern pattern = Pattern.compile(patternString);
 		Matcher matcher = pattern.matcher(expression);
 		while (matcher.find()) {
-		
+
 			String code = matcher.group();
-			String val=matcher.group(1);
+			String val = matcher.group(1);
 			String key = matcher.group(2);
 
 			if (code.startsWith("<")) {
 				String contextreplacement = context.getOrDefault(code, code);
 				if (code.equals("<61>") || code.equals("<COMPLAIN_TYPE>")) {
 					meanings = codeMeanings.get(code);
-					
+
 				}
 				if (code.equals("<SUB_COMPLAIN_TYPE>")) {
 					meanings = subcomplaintDescrMap.get(Integer.parseInt(index));
@@ -177,25 +177,30 @@ public class NottobeTransactedImpl {
 			}
 
 			else {
-				
+
 				if (meanings != null) {
-					index=code;
-					replacement = (String) meanings.getOrDefault(code, code);
+					index = code;
+					if (code.length()==3 && Character.isLetter(code.charAt(1))) {
+						System.out.println(code);
+						replacement = (String) meanings.getOrDefault(key, key);
+					} else {
+
+						replacement = (String) meanings.getOrDefault(code, code);
+					}
 				} else {
 					replacement = code;
 				}
+
 				matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
 
 			}
-			
+
 			System.out.println(result);
 
 		}
 		matcher.appendTail(result);
 		return result.toString();
 	}
-
-	
 
 	private static String fetchSubComplainTypeMeaning(String complainType, String subComplainType) {
 		return (subcomplaintDescrMap.get(complainType)).get(subComplainType);

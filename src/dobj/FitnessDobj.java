@@ -1,12 +1,17 @@
 package dobj;
 
 public class FitnessDobj {
-
+	
 	CommonDobj commonDobj;
 	FitnessValidityDobj fitnessValidityDobj;
 	private String vltdCheck;
 	private boolean docUpload;
 	private boolean newVehFitness;
+	private boolean fitnessRevokeAllowed;
+	private int fitnessRevokeAllowedDays;
+	private int graceDays;
+	private boolean fcAfterHsrp;
+	
 	
 	public CommonDobj getCommonDobj() {
 		return commonDobj;
@@ -38,6 +43,31 @@ public class FitnessDobj {
 	public void setNewVehFitness(boolean newVehFitness) {
 		this.newVehFitness = newVehFitness;
 	}
+	public boolean isFitnessRevokeAllowed() {
+		return fitnessRevokeAllowed;
+	}
+	public void setFitnessRevokeAllowed(boolean fitnessRevokeAllowed) {
+		this.fitnessRevokeAllowed = fitnessRevokeAllowed;
+	}
+	public int getFitnessRevokeAllowedDays() {
+		return fitnessRevokeAllowedDays;
+	}
+	public void setFitnessRevokeAllowedDays(int fitnessRevokeAllowedDays) {
+		this.fitnessRevokeAllowedDays = fitnessRevokeAllowedDays;
+	}
+	public int getGraceDays() {
+		return graceDays;
+	}
+	public void setGraceDays(int graceDays) {
+		this.graceDays = graceDays;
+	}
+	public boolean isFcAfterHsrp() {
+		return fcAfterHsrp;
+	}
+	public void setFcAfterHsrp(boolean fcAfterHsrp) {
+		this.fcAfterHsrp = fcAfterHsrp;
+	}
+	
 	
 	
 	

@@ -5,6 +5,7 @@ public class FitnessValidityDobj {
 	String condition;
 	int newVal;
 	int renewVal;
+	String periodmod;
 	public String getCondition() {
 		return condition;
 	}
@@ -23,5 +24,13 @@ public class FitnessValidityDobj {
 	public void setRenewVal(int renewVal) {
 		this.renewVal = renewVal;
 	}
+	public String getPeriodmod() {
+		return periodmod;
+	}
+	public void setPeriodmod(String periodmod) {
+		this.periodmod = periodmod;
+	}
+	
+	
 	
 }

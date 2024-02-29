@@ -298,6 +298,7 @@ public class FillMapUtility {
 			while (rs.next()) {
 				vmtaxslabfieldsmap.put(rs.getString("code"), rs.getString("descr"));
 			}
+		
 
 		}
 
@@ -573,7 +574,7 @@ public class FillMapUtility {
 		}
 		matcher.appendTail(result);
 		System.out.println(result);
-		return result.toString();
+		return result.toString()+")";
 
 	}
 
