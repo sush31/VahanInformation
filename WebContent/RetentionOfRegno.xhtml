@@ -20,54 +20,65 @@ and open the template in the editor.
 <h:body>
 	<h:form>
 
-		<p:dataTable value="#{loginBean.commonDobj}" var="item"
-			id="commonservicepage">
+		<p:dataTable value="#{loginBean.toretention" var="item"
+			id="retentionofregno">
 			<f:facet name="header">
 				<p:outputLabel
-					value="Configuration Details of #{loginBean.purposeDescr} of #{loginBean.selectedState}" />
+					value="Configuration Details of #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
 			</f:facet>
 
 			<p:column headerText="Service Related to RTO">
-				<p:outputLabel value="#{item.serviceRto}" />
+				<p:outputLabel value="#{item.commonDobj.serviceRto}" />
 			</p:column>
 			<p:column headerText="Service Related to Citizen">
-				<p:outputLabel value="#{item.serviceCitizen}" />
+				<p:outputLabel value="#{item.commonDobj.serviceCitizen}" />
 			</p:column>
 			<p:column headerText="Document Upload at RTO">
-				<p:outputLabel value="#{item.uploadDocumentRto}" />
+				<p:outputLabel value="#{item.docUpload}" />
 			</p:column>
 			<p:column headerText="Document Upload at Citizen">
-				<p:outputLabel value="#{item.uploadDocumentCitizen}" />
+				<p:outputLabel value="#{item.commonDobj.uploadDocumentCitizen}" />
 			</p:column>
 
 			<p:column headerText="Mobile Authentication at Citizen">
-				<p:outputLabel value="#{item.mobileAuthenticationCitizen}" />
+				<p:outputLabel
+					value="#{item.commonDobj.mobileAuthenticationCitizen}" />
 			</p:column>
 
 			<p:column headerText="Aadhar Authentication at Citizen">
-				<p:outputLabel value="#{item.aadharAuthenticationCitizen}" />
+				<p:outputLabel
+					value="#{item.commonDobj.aadharAuthenticationCitizen}" />
 			</p:column>
 			<p:column headerText="Fee Exemption">
-				<p:outputLabel value="#{item.feeExempt}" />
+				<p:outputLabel value="#{item.commonDobj.feeExempt}" />
+			</p:column>
+			<p:column headerText="Tax Exemption">
+				<p:outputLabel value="#{item.commonDobj.taxExempt}" />
 			</p:column>
 
 			<p:column headerText="Application inward at other RTO">
-				<p:outputLabel value="#{item.applInwardOtherRto}" />
+				<p:outputLabel value="#{item.commonDobj.applInwardOtherRto}" />
 			</p:column>
-			
-			
-			<p:column headerText="new hsrp">
-				<p:outputLabel value="#{item.hsrp}" />
+
+
+			<p:column headerText="Retention of Registration No While Transfer of Ownership">
+				<p:outputLabel value="#{item.commonDobj.applInwardOtherRto}" />
 			</p:column>
-			
-			<p:column headerText="old hsrp">
-				<p:outputLabel value="#{item.oldhsrp}" />
+
+
+			<p:column headerText="Transfer of Ownership Retention for All Registration No">
+				<p:outputLabel value="#{item.commonDobj.applInwardOtherRto}" />
 			</p:column>
+
+
+
 		</p:dataTable>
 		<br />
 		<br />
-		
-		
+
+
+	
+
 
 		<p:dataTable value="#{loginBean.flowRto}" var="flowrto"
 			id="rtoflowtable">
@@ -78,23 +89,22 @@ and open the template in the editor.
 			<p:column headerText="flow_serial_no">
 				<p:outputLabel value="#{flowrto.flow_srno}" />
 			</p:column>
-			<p:column headerText="Action Code">
+			<p:column headerText="Action Code whose description is given in adjacent column">
 				<p:outputLabel value="#{flowrto.action_cd}" />
 			</p:column>
 			<p:column headerText="Action Description">
 				<p:outputLabel value="#{flowrto.action_descr}" />
 			</p:column>
-			<p:column headerText="Is Backward (Application can move backward to the action or step where isbackward is true if isbackward is true )">
+			<p:column headerText="Is Backward">
 				<p:outputLabel value="#{flowrto.backward}" />
 			</p:column>
 			<p:column headerText="Conditon Formula Description">
 				<p:outputLabel value="#{flowrto.condition_formula}" />
 			</p:column>
-
-
 		</p:dataTable>
 		<br />
 		<br />
+
 		<p:dataTable value="#{loginBean.flowCitizen}" var="flowcitizen"
 			id="citizenflowtable">
 			<f:facet name="header">
@@ -104,13 +114,13 @@ and open the template in the editor.
 			<p:column headerText="flow_serial_no">
 				<p:outputLabel value="#{flowcitizen.flow_srno}" />
 			</p:column>
-			<p:column headerText="Action Code">
+			<p:column headerText="Action Code whose description is given in adjacent column">
 				<p:outputLabel value="#{flowcitizen.action_cd}" />
 			</p:column>
 			<p:column headerText="Action Description">
 				<p:outputLabel value="#{flowcitizen.action_descr}" />
 			</p:column>
-			<p:column headerText="Is Backward (Application can move backward to the action or step where isbackward is true if isbackward is true )">
+			<p:column headerText="Is Backward">
 				<p:outputLabel value="#{flowcitizen.backward}" />
 			</p:column>
 			<p:column headerText="auto approval allowed">
@@ -119,7 +129,7 @@ and open the template in the editor.
 			<p:column headerText="Conditon Formula Description">
 				<p:outputLabel value="#{flowcitizen.condition_formula}" />
 			</p:column>
-			
+
 		</p:dataTable>
 		<br />
 		<br />

@@ -28,14 +28,17 @@ import dobj.ConvertibleClasses;
 import dobj.FitnessDobj;
 import dobj.FitnessValidityDobj;
 import dobj.NewRegistrationDobj;
+import dobj.NonuseRestoreRemoveDobj;
 import dobj.NottobeTransactedDobj;
 import dobj.PermitDobj;
 import dobj.RenewalOfRegistrationDobj;
 import dobj.RtoServiceFlowDobj;
+import dobj.ToRetentionDobj;
 import dobj.TransferOfOwnershipDobj;
 import impl.CommonServiceImpl;
 import impl.FitnessImpl;
 import impl.NewRegistrationImpl;
+import impl.NonUseRestoreImpl;
 import impl.NottobeTransactedImpl;
 import impl.PermitImpl;
 import impl.RenewalOfRegistrationImpl;
@@ -56,24 +59,25 @@ public class LoginBean implements Serializable {
 	private String selectedState;
 	private String selectedService;
 	private String purposeDescr;
-	public PermitDobj permitdobj = new PermitDobj();
-	public NewRegistrationDobj newregndobj = new NewRegistrationDobj();
-	public CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
-	public RenewalOfRegistrationDobj renewalRegDobj = new RenewalOfRegistrationDobj();
-	public TransferOfOwnershipDobj transferOwnershipDobj = new TransferOfOwnershipDobj();
-	public CommonDobj commonDobj = new CommonDobj();
-	public ConversionOfVehicleDobj convDobj = new ConversionOfVehicleDobj();
-	public RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
-	ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
-	ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
-	ConversionOfVehicleDobj conversionDobj = new ConversionOfVehicleDobj();
-	NottobeTransactedDobj nottobeTransactedDobj=new NottobeTransactedDobj();
-	ArrayList<ConvertibleClasses> list = new ArrayList<>();
-	FitnessDobj fitnessDobj = new FitnessDobj();
-	ArrayList<FitnessValidityDobj> fitnessValidityList = new ArrayList<>();
+	private PermitDobj permitdobj = new PermitDobj();
+	private NewRegistrationDobj newregndobj = new NewRegistrationDobj();
+	private CitizenServiceFlowDobj citizenFlow = new CitizenServiceFlowDobj();
+	private RenewalOfRegistrationDobj renewalRegDobj = new RenewalOfRegistrationDobj();
+	private TransferOfOwnershipDobj transferOwnershipDobj = new TransferOfOwnershipDobj();
+	private CommonDobj commonDobj = new CommonDobj();
+	private ConversionOfVehicleDobj convDobj = new ConversionOfVehicleDobj();
+	private RtoServiceFlowDobj rtoFlowdobj = new RtoServiceFlowDobj();
+	private ArrayList<CitizenServiceFlowDobj> flowCitizen = new ArrayList<>();
+	private ArrayList<RtoServiceFlowDobj> flowRto = new ArrayList<>();
+	private ConversionOfVehicleDobj conversionDobj = new ConversionOfVehicleDobj();
+	private NottobeTransactedDobj nottobeTransactedDobj = new NottobeTransactedDobj();
+	private ArrayList<ConvertibleClasses> list = new ArrayList<>();
+	private FitnessDobj fitnessDobj = new FitnessDobj();
+	private ToRetentionDobj toretention=new ToRetentionDobj();
+	private NonuseRestoreRemoveDobj nonuseDobj=new NonuseRestoreRemoveDobj();
+	private ArrayList<FitnessValidityDobj> fitnessValidityList = new ArrayList<>();
 	public static Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
 	public static Map<String, Map<String, String>> contextAwareCodeMeanings;
-	
 
 	@PostConstruct
 	public void init() {
@@ -84,9 +88,8 @@ public class LoginBean implements Serializable {
 		vmtaxslabfieldsmap.remove("<46>");
 		vmtaxslabfieldsmap.put("<46>", "transport type");
 		vmtaxslabfieldsmap.put("<action_cd>", "action");
-		contextAwareCodeMeanings = FillMapUtility
-				.fetchContextAwareCodeMeaningsFromDatabase();
-		
+		contextAwareCodeMeanings = FillMapUtility.fetchContextAwareCodeMeaningsFromDatabase();
+
 	}
 
 	public List<SelectItem> getStateList() {
@@ -232,7 +235,9 @@ public class LoginBean implements Serializable {
 				|| purCd == TableConstants.VM_MAST_RC_CANCELLATION || purCd == TableConstants.VM_TRANSACTION_MAST_DUP_RC
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_DUP_FC
 				|| purCd == TableConstants.VM_TRANSACTION_CONVERSION_PAPER_RC_TO_SMARTCARD
-				|| purCd == TableConstants.VM_TRANSACTION_ADD_MODIFY_NOMINEE) {
+				|| purCd == TableConstants.VM_TRANSACTION_ADD_MODIFY_NOMINEE)
+
+		{
 
 			outcome = "redirectToCommonService";
 
@@ -263,15 +268,34 @@ public class LoginBean implements Serializable {
 				|| purCd == TableConstants.VM_TRANSACTION_MAST_NOC_CANCEL) {
 			commonDobj.setNocAllowForSameState(new CommonServiceImpl().nocRequiredForSameState(selectedState));
 			outcome = "noc";
-		}
-		else if(purCd==TableConstants.VM_TRANSACTION_NOT_TO_BE_TRANSACTED)
-		{   
+		} else if (purCd == TableConstants.VM_TRANSACTION_NOT_TO_BE_TRANSACTED) {
 			nottobeTransactedDobj.setCommonDobj(commonDobj);
-			nottobeTransactedDobj.setAllowedConditionFormulaForAction(new NottobeTransactedImpl().getAllowedConditionFormulaDescrForAction(selectedState));
-			nottobeTransactedDobj.setAllowedConditionFormulaForPurpose(new NottobeTransactedImpl().getAllowedConditionFormulaDescrForPurpose(selectedState));
-			return"NotToBeTransacted";
+			nottobeTransactedDobj.setAllowedConditionFormulaForAction(
+					new NottobeTransactedImpl().getAllowedConditionFormulaDescrForAction(selectedState));
+			nottobeTransactedDobj.setAllowedConditionFormulaForPurpose(
+					new NottobeTransactedImpl().getAllowedConditionFormulaDescrForPurpose(selectedState));
+			outcome = "NotToBeTransacted";
+
+		}
+		if (purCd == TableConstants.VM_FITNESS_REVOCATION || purCd == TableConstants.VM_FITNESS_EXEMPTION
+				|| purCd == TableConstants.VM_FITNESS_CANCELLATION || purCd == TableConstants.VM_TRANSACTION_OWNER_VEHICLE_DETAILS_EDIT || purCd==TableConstants.VM_PARK_EXEMPTION_PUR_CD) {
+			outcome = "redirectToFitnessRevocation";
+		}
+		else if(purCd==TableConstants.VM_RETENTION_OF_REGN_NO)
+		{
+			toretention.setCommonDobj(commonDobj);
+			toretention.setToRetention(new TransferOfOwnershipImpl().getTORetentionOfRegno(selectedState));
+			toretention.setToRetention(new TransferOfOwnershipImpl().getTORetentionOfRegnoForAllRegno(selectedState));
+			outcome="redirectToRetentionOfRegno";
 			
 		}
+		else if(purCd==TableConstants.VM_NONUSE_RESTORE_REMOVE)
+		{
+			nonuseDobj.setCommonDobj(commonDobj);
+			new NonUseRestoreImpl().fetchNonuseAttributes(nonuseDobj);
+			outcome="redirectToNonuseRestore";
+		}
+
 		return outcome;
 
 	}
@@ -434,6 +458,22 @@ public class LoginBean implements Serializable {
 
 	public void setNottobeTransactedDobj(NottobeTransactedDobj nottobeTransactedDobj) {
 		this.nottobeTransactedDobj = nottobeTransactedDobj;
+	}
+
+	public ToRetentionDobj getToretention() {
+		return toretention;
+	}
+
+	public void setToretention(ToRetentionDobj toretention) {
+		this.toretention = toretention;
+	}
+
+	public NonuseRestoreRemoveDobj getNonuseDobj() {
+		return nonuseDobj;
+	}
+
+	public void setNonuseDobj(NonuseRestoreRemoveDobj nonuseDobj) {
+		this.nonuseDobj = nonuseDobj;
 	}
 	
 

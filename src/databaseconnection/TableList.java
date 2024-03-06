@@ -304,6 +304,7 @@ abstract public class TableList implements Serializable {
 	public static final String VT_TAX_BASED_ON_PERMIT = "vt_tax_based_on_permit_info";
 	public static final String VH_TAX_BASED_ON_PERMIT = "vh_tax_based_on_permit_info";
 	public static final String TM_CONFIGURATION = "tm_configuration";
+	public static final String TM_CONFIGURATION_NONUSE = "tm_configuration_nonuse";
 	public static final String THM_OFFICE_CONFIGURATION = "thm_office_configuration";
 	public static final String VA_FITNESS = "va_fitness";
 	public static final String VT_FITNESS = "vt_fitness";

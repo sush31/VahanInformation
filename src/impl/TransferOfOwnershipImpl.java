@@ -90,5 +90,79 @@ public class TransferOfOwnershipImpl {
 		return transferOwnershipDobj;
 
 	}
+	public boolean getTORetentionOfRegnoForAllRegno(String stateCd) {
+		boolean toRetention = false;
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select to_retention_for_all_regn from  " + TableList.TM_CONFIGURATION + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch TO retention");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+
+				toRetention = (rs.getBoolean("to_retention_for_all_regn"));
+				
+
+			}
+			
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return toRetention;
+
+	}
+	
+	public boolean getTORetentionOfRegno(String stateCd) {
+		boolean toRetention = false;
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = "select to_retention from  " + TableList.TM_CONFIGURATION + " where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch TO retention");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+
+				toRetention = (rs.getBoolean("to_retention"));
+				
+
+			}
+			
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return toRetention;
+
+	}
+
 
 }

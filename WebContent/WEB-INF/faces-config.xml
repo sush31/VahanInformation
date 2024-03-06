@@ -26,7 +26,7 @@
 			<from-outcome>redirectToRenewalRegistration</from-outcome>
 			<to-view-id>/RenewalOfRegistration.xhtml</to-view-id>
 		</navigation-case>
-        <navigation-case>
+		<navigation-case>
 			<from-outcome>redirectToTransferOfOwnership</from-outcome>
 			<to-view-id>/TransferOfOwnership.xhtml</to-view-id>
 		</navigation-case>
@@ -58,11 +58,29 @@
 			<from-outcome>NotToBeTransacted</from-outcome>
 			<to-view-id>/NotToBeTransacted.xhtml</to-view-id>
 		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>redirectToFitnessRevocation</from-outcome>
+			<to-view-id>/FitnessRevocation.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>redirectToRetentionOfRegno</from-outcome>
+			<to-view-id>/RetentionOfRegno.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>redirectToNonuseRestore</from-outcome>
+			<to-view-id>/NonuseRestore.xhtml</to-view-id>
+		</navigation-case>
 		
 		
+
+		
+
 	</navigation-rule>
-	
-	
-	
+
+
+
 </faces-config>
 

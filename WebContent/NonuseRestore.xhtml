@@ -20,8 +20,8 @@ and open the template in the editor.
 <h:body>
 	<h:form>
 
-		<p:dataTable value="#{loginBean.fitnessDobj}" var="item"
-			id="fitnessofvehicle">
+		<p:dataTable value="#{loginBean.nonuseDobj}" var="item"
+			id="nonuserestore">
 			<f:facet name="header">
 				<p:outputLabel
 					value="Configuration Details of #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
@@ -34,116 +34,105 @@ and open the template in the editor.
 				<p:outputLabel value="#{item.commonDobj.serviceCitizen}" />
 			</p:column>
 			<p:column headerText="Document Upload at RTO">
-				<p:outputLabel value="#{item.docUpload}" />
+				<p:outputLabel value="#{item.commonDobj.uploadDocumentRto}" />
 			</p:column>
 			<p:column headerText="Document Upload at Citizen">
 				<p:outputLabel value="#{item.commonDobj.uploadDocumentCitizen}" />
 			</p:column>
 
 			<p:column headerText="Mobile Authentication at Citizen">
-				<p:outputLabel value="#{item.commonDobj.mobileAuthenticationCitizen}" />
+				<p:outputLabel
+					value="#{item.commonDobj.mobileAuthenticationCitizen}" />
 			</p:column>
 
 			<p:column headerText="Aadhar Authentication at Citizen">
-				<p:outputLabel value="#{item.commonDobj.aadharAuthenticationCitizen}" />
-			</p:column>
-			<p:column headerText="Fee Exemption">
-				<p:outputLabel value="#{item.commonDobj.feeExempt}" />
-			</p:column>
-			<p:column headerText="Tax Exemption">
-				<p:outputLabel value="#{item.commonDobj.taxExempt}" />
+				<p:outputLabel
+					value="#{item.commonDobj.aadharAuthenticationCitizen}" />
 			</p:column>
 
 			<p:column headerText="Application inward at other RTO">
 				<p:outputLabel value="#{item.commonDobj.applInwardOtherRto}" />
 			</p:column>
-			
-			<p:column headerText="vltd check">
-				<p:outputLabel value="#{item.vltdCheck}" />
+
+			<p:column headerText="Adjustment in tax amount for nonuse">
+				<p:outputLabel value="#{item.taxAmountAdjustment}" />
 			</p:column>
-			
-			<p:column headerText="New Vehicle Fitness">
-				<p:outputLabel value="#{item.newVehFitness}" />
+
+			<p:column headerText="Skip fitness validation for nonuse">
+				<p:outputLabel value="#{item.skipFitness}" />
 			</p:column>
-			
-			<p:column headerText="Whether fitness revoke is allowed?">
-				<p:outputLabel value="#{item.fitnessRevokeAllowed}" />
+
+			<p:column headerText="Continue nonuse without restore">
+				<p:outputLabel value="#{item.nonuseContinueWithoutRestore}" />
 			</p:column>
-			
-			<p:column headerText="No. of days allowed for fitness revoke">
-				<p:outputLabel value="#{item.fitnessRevokeAllowedDays}" />
+
+			<p:column headerText="Disable nonuse from date in nonuse continue">
+				<p:outputLabel value="#{item.disableFromDate}" />
 			</p:column>
-			
-			<p:column headerText="fitness allowed after hsrp">
-				<p:outputLabel value="#{item.fcAfterHsrp}" />
+
+			<p:column headerText="Documents surrender">
+				<p:outputLabel value="#{item.docsSurr}" />
 			</p:column>
-			
-			<p:column headerText="grace days for failed fitness">
-				<p:outputLabel value="#{item.graceDays}" />
+
+			<p:column headerText="Vehicle inspection mandatory">
+				<p:outputLabel value="#{item.vehicleInspection}" />
 			</p:column>
-			
-			
+
+			<p:column headerText="Declaration of withdrawl date">
+				<p:outputLabel value="#{item.declareWithdrawdate}" />
+			</p:column>
+
+			<p:column
+				headerText="When Vehicle is in removal shift(transfer of vehicle from one garage to another) nonuse is terminated for that period">
+				<p:outputLabel value="#{item.removeFromNonuseInRemovalshift}" />
+			</p:column>
+
+			<p:column headerText="Nonuse from first date of month mandatory">
+				<p:outputLabel value="#{item.firstDateOfMonth}" />
+			</p:column>
+
+			<p:column headerText="Nonuse upto last date of month mandatory">
+				<p:outputLabel value="#{item.lastDateOfMonth}" />
+			</p:column>
+
+			<p:column
+				headerText="Nonuse upto end of financial year mandatory ie 31st March">
+				<p:outputLabel value="#{item.exempUptoFinYr}" />
+			</p:column>
+
+			<p:column
+				headerText="Nonuse for quarter month period mandatory ie for 3 months">
+				<p:outputLabel value="#{item.quarterMonth}" />
+			</p:column>
+
+			<p:column headerText="Advance tax required">
+				<p:outputLabel value="#{item.advTax}" />
+			</p:column>
+
+
+			<p:column headerText="Nonuse allowed only if tax is uptodate">
+				<p:outputLabel value="#{item.allowNonUseIfTaxUptodate}" />
+			</p:column>
+
+
+			<p:column headerText="Non use allowed from back date">
+				<p:outputLabel value="#{item.nonUseFromBackdate}" />
+			</p:column>
+
+			<p:column
+				headerText="Minimum months for which nonuse has to be issued">
+				<p:outputLabel value="#{item.minMonth}" />
+			</p:column>
+
+			<p:column
+				headerText="Maximum months for which nonuse has to be issued">
+				<p:outputLabel value="#{item.maxMonth}" />
+			</p:column>
 		</p:dataTable>
 		<br />
 		<br />
-		
-		
-	<!--  fitness validity table starts -->
-		<p:dataTable value="#{loginBean.fitnessValidityList}" var="fitnesslist"
-			id="fitness">
-			<f:facet name="header">
-				<p:outputLabel
-					value="Fitness Validity" />
-			</f:facet>
-			<p:column headerText="New Value(Duration for which fitness is issued for first time)">
-				<p:outputLabel value="#{fitnesslist.newVal}" />
-			</p:column>
-			
-			<p:column headerText="Renew Value (Duration for which fitness is renewed)">
-				<p:outputLabel value="#{fitnesslist.renewVal}" />
-			</p:column>
-			
-			
-			<p:column headerText="Mode of time duration(one time/monthy/yearly etc)">
-			<p:outputLabel value="#{fitnesslist.periodmod}" />
-			</p:column>
-			
-			
-			
-			<p:column headerText="condition">
-				<p:outputLabel value="#{fitnesslist.condition}" />
-			</p:column>
-			
-			
-			</p:dataTable>
-	<!--  fitness validity table ends-->
-			
-		<br />
-		<br />
-		<!--  fee applicable table starts -->
-		<p:dataTable
-			value="#{loginBean.newregndobj.feesApplicable.entrySet()}" var="fees"
-			id="feestable">
-			<f:facet name="header">
-				<p:outputLabel
-					value="Fees applicable for  #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
-			</f:facet>
-			<p:column>
-				<f:facet name="header">Purpose</f:facet>
-           	                   #{fees.key}
-           
-                             </p:column>
-			<p:column>
-				<f:facet name="header">Condition</f:facet>
-                               #{fees.value}
-                              </p:column>
-             
-         </p:dataTable>
-        <!-- fee applicable table ends -->
-         <br/><br/>
 
-
-		<p:dataTable value="#{loginBean.flowRto}" var="flowrto"
+          <p:dataTable value="#{loginBean.flowRto}" var="flowrto"
 			id="rtoflowtable">
 			<f:facet name="header">
 				<p:outputLabel
@@ -152,21 +141,23 @@ and open the template in the editor.
 			<p:column headerText="flow_serial_no">
 				<p:outputLabel value="#{flowrto.flow_srno}" />
 			</p:column>
-			<p:column headerText="Action Code whose description is given in adjacent column">
+			<p:column
+				headerText="Action Code whose description is given in adjacent column">
 				<p:outputLabel value="#{flowrto.action_cd}" />
 			</p:column>
 			<p:column headerText="Action Description">
 				<p:outputLabel value="#{flowrto.action_descr}" />
 			</p:column>
-			<p:column headerText="Is Backward (Application can move backward to the action or step where isbackward is true if isbackward is true )">
+			<p:column headerText="Is Backward">
 				<p:outputLabel value="#{flowrto.backward}" />
 			</p:column>
 			<p:column headerText="Conditon Formula Description">
 				<p:outputLabel value="#{flowrto.condition_formula}" />
 			</p:column>
 		</p:dataTable>
-		<br/><br/>
-	
+		<br />
+		<br />
+
 		<p:dataTable value="#{loginBean.flowCitizen}" var="flowcitizen"
 			id="citizenflowtable">
 			<f:facet name="header">
@@ -176,7 +167,8 @@ and open the template in the editor.
 			<p:column headerText="flow_serial_no">
 				<p:outputLabel value="#{flowcitizen.flow_srno}" />
 			</p:column>
-			<p:column headerText="Action Code whose description is given in adjacent column">
+			<p:column
+				headerText="Action Code whose description is given in adjacent column">
 				<p:outputLabel value="#{flowcitizen.action_cd}" />
 			</p:column>
 			<p:column headerText="Action Description">
@@ -191,7 +183,7 @@ and open the template in the editor.
 			<p:column headerText="Conditon Formula Description">
 				<p:outputLabel value="#{flowcitizen.condition_formula}" />
 			</p:column>
-			
+
 		</p:dataTable>
 		<br />
 		<br />
