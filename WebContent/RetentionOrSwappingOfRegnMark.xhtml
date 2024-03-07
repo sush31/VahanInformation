@@ -20,8 +20,8 @@ and open the template in the editor.
 <h:body>
 	<h:form>
 
-		<p:dataTable value="#{loginBean.fitnessDobj}" var="item"
-			id="fitnessofvehicle">
+		<p:dataTable value="#{loginBean.swappingDobj}" var="item"
+			id="nonuserestore">
 			<f:facet name="header">
 				<p:outputLabel
 					value="Configuration Details of #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
@@ -34,114 +34,65 @@ and open the template in the editor.
 				<p:outputLabel value="#{item.commonDobj.serviceCitizen}" />
 			</p:column>
 			<p:column headerText="Document Upload at RTO">
-				<p:outputLabel value="#{item.docUpload}" />
+				<p:outputLabel value="#{item.commonDobj.uploadDocumentRto}" />
 			</p:column>
 			<p:column headerText="Document Upload at Citizen">
 				<p:outputLabel value="#{item.commonDobj.uploadDocumentCitizen}" />
 			</p:column>
 
 			<p:column headerText="Mobile Authentication at Citizen">
-				<p:outputLabel value="#{item.commonDobj.mobileAuthenticationCitizen}" />
+				<p:outputLabel
+					value="#{item.commonDobj.mobileAuthenticationCitizen}" />
 			</p:column>
 
 			<p:column headerText="Aadhar Authentication at Citizen">
-				<p:outputLabel value="#{item.commonDobj.aadharAuthenticationCitizen}" />
-			</p:column>
-			<p:column headerText="Fee Exemption">
-				<p:outputLabel value="#{item.commonDobj.feeExempt}" />
-			</p:column>
-			<p:column headerText="Tax Exemption">
-				<p:outputLabel value="#{item.commonDobj.taxExempt}" />
+				<p:outputLabel
+					value="#{item.commonDobj.aadharAuthenticationCitizen}" />
 			</p:column>
 
 			<p:column headerText="Application inward at other RTO">
 				<p:outputLabel value="#{item.commonDobj.applInwardOtherRto}" />
 			</p:column>
-			
-			<p:column headerText="vltd check(Whether Vehicle location tracking device is installed)">
-				<p:outputLabel value="#{item.vltdCheck}" />
+
+			<p:column headerText="Same owner name for swapping/retention">
+				<p:outputLabel value="#{item.sameOwnerName}" />
 			</p:column>
-			
-			<p:column headerText="New Vehicle Fitness">
-				<p:outputLabel value="#{item.newVehFitness}" />
+
+			<p:column headerText="Same father name for swapping/retention">
+				<p:outputLabel value="#{item.sameFatherName}" />
 			</p:column>
-			
-			<p:column headerText="Whether fitness revoke is allowed?">
-				<p:outputLabel value="#{item.fitnessRevokeAllowed}" />
+
+			<p:column headerText="Same vehicle class for swapping/retention">
+				<p:outputLabel value="#{item.sameVehCls}" />
 			</p:column>
-			
-			<p:column headerText="No. of days allowed for fitness revoke">
-				<p:outputLabel value="#{item.fitnessRevokeAllowedDays}" />
+
+			<p:column headerText="Same vehicle category for swapping/retention">
+				<p:outputLabel value="#{item.sameVehCatg}" />
 			</p:column>
-			
-			<p:column headerText="fitness allowed after hsrp">
-				<p:outputLabel value="#{item.fcAfterHsrp}" />
+
+			<p:column headerText="Multiple swapping allowed">
+				<p:outputLabel value="#{item.multipleSwap}" />
 			</p:column>
-			
-			<p:column headerText="grace days for failed fitness">
-				<p:outputLabel value="#{item.graceDays}" />
+
+			<p:column headerText="Swapping allowed for theft untraced case">
+				<p:outputLabel value="#{item.theftCaseSwappingAllowed}" />
 			</p:column>
-			
-			
+
+			<p:column headerText="One regn no must be fancy">
+				<p:outputLabel value="#{item.fancyNum}" />
+			</p:column>
+
+			<p:column headerText="Vehicle age must be greater than">
+				<p:outputLabel value="#{item.oldVehAge}" />
+			</p:column>
+
+			<p:column headerText="Vehicle age must be less than">
+				<p:outputLabel value="#{item.newVehAge}" />
+			</p:column>
+
 		</p:dataTable>
 		<br />
 		<br />
-		
-		
-	<!--  fitness validity table starts -->
-		<p:dataTable value="#{loginBean.fitnessValidityList}" var="fitnesslist"
-			id="fitness">
-			<f:facet name="header">
-				<p:outputLabel
-					value="Fitness Validity" />
-			</f:facet>
-			<p:column headerText="New Value(Duration for which fitness is issued for first time)">
-				<p:outputLabel value="#{fitnesslist.newVal}" />
-			</p:column>
-			
-			<p:column headerText="Renew Value (Duration for which fitness is renewed)">
-				<p:outputLabel value="#{fitnesslist.renewVal}" />
-			</p:column>
-			
-			
-			<p:column headerText="Mode of time duration(one time/monthy/yearly etc)">
-			<p:outputLabel value="#{fitnesslist.periodmod}" />
-			</p:column>
-			
-			
-			
-			<p:column headerText="condition">
-				<p:outputLabel value="#{fitnesslist.condition}" />
-			</p:column>
-			
-			
-			</p:dataTable>
-	<!--  fitness validity table ends-->
-			
-		<br />
-		<br />
-		<!--  fee applicable table starts -->
-		<p:dataTable
-			value="#{loginBean.newregndobj.feesApplicable.entrySet()}" var="fees"
-			id="feestable">
-			<f:facet name="header">
-				<p:outputLabel
-					value="Fees applicable for  #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
-			</f:facet>
-			<p:column>
-				<f:facet name="header">Purpose</f:facet>
-           	                   #{fees.key}
-           
-                             </p:column>
-			<p:column>
-				<f:facet name="header">Condition</f:facet>
-                               #{fees.value}
-                              </p:column>
-             
-         </p:dataTable>
-        <!-- fee applicable table ends -->
-         <br/><br/>
-
 
 		<p:dataTable value="#{loginBean.flowRto}" var="flowrto"
 			id="rtoflowtable">
@@ -152,22 +103,23 @@ and open the template in the editor.
 			<p:column headerText="flow_serial_no">
 				<p:outputLabel value="#{flowrto.flow_srno}" />
 			</p:column>
-			<p:column headerText="Action Code whose description is given in adjacent column">
+			<p:column
+				headerText="Action Code whose description is given in adjacent column">
 				<p:outputLabel value="#{flowrto.action_cd}" />
 			</p:column>
 			<p:column headerText="Action Description">
 				<p:outputLabel value="#{flowrto.action_descr}" />
 			</p:column>
-			<p:column headerText="Is Backward (Application can move backward to the action or step where isbackward is true if isbackward is true )">
+			<p:column headerText="Is Backward">
 				<p:outputLabel value="#{flowrto.backward}" />
 			</p:column>
 			<p:column headerText="Conditon Formula Description">
 				<p:outputLabel value="#{flowrto.condition_formula}" />
 			</p:column>
 		</p:dataTable>
-		<br/><br/>
-	
-		<p:dataTable value="#{loginBean.flowCitizen}" var="flowcitizen"
+		<br />
+		<br />
+         <p:dataTable value="#{loginBean.flowCitizen}" var="flowcitizen"
 			id="citizenflowtable">
 			<f:facet name="header">
 				<p:outputLabel

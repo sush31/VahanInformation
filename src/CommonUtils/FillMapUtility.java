@@ -832,6 +832,14 @@ public class FillMapUtility {
 			sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 					+ " where state_cd=? and action='CRS'";
 		}
+		 else if (purCd == TableConstants.VM_REASSIGNMENT_BH_SERIES) {
+				sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+						+ " where state_cd=? and action='RRB'";
+			}
+		 else if (purCd== TableConstants.VM_REASSIGNMENT_BH_TO_RUNNING) {
+				sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+						+ " where state_cd=? and action='RBN'";
+			}
 
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch fees");

@@ -31,7 +31,9 @@ import dobj.NewRegistrationDobj;
 import dobj.NonuseRestoreRemoveDobj;
 import dobj.NottobeTransactedDobj;
 import dobj.PermitDobj;
+import dobj.ReassignmentToBHSeriesDobj;
 import dobj.RenewalOfRegistrationDobj;
+import dobj.RetentionOrSwappingOfRegnDobj;
 import dobj.RtoServiceFlowDobj;
 import dobj.ToRetentionDobj;
 import dobj.TransferOfOwnershipDobj;
@@ -41,7 +43,9 @@ import impl.NewRegistrationImpl;
 import impl.NonUseRestoreImpl;
 import impl.NottobeTransactedImpl;
 import impl.PermitImpl;
+import impl.ReassignmentToBHSeriesImpl;
 import impl.RenewalOfRegistrationImpl;
+import impl.RetentionOrSwappingOfRegnImpl;
 import impl.TransferOfOwnershipImpl;
 
 import javax.faces.model.SelectItem;
@@ -73,8 +77,10 @@ public class LoginBean implements Serializable {
 	private NottobeTransactedDobj nottobeTransactedDobj = new NottobeTransactedDobj();
 	private ArrayList<ConvertibleClasses> list = new ArrayList<>();
 	private FitnessDobj fitnessDobj = new FitnessDobj();
-	private ToRetentionDobj toretention=new ToRetentionDobj();
-	private NonuseRestoreRemoveDobj nonuseDobj=new NonuseRestoreRemoveDobj();
+	private ToRetentionDobj toretention = new ToRetentionDobj();
+	private NonuseRestoreRemoveDobj nonuseDobj = new NonuseRestoreRemoveDobj();
+	private RetentionOrSwappingOfRegnDobj swappingDobj=new RetentionOrSwappingOfRegnDobj();
+	private ReassignmentToBHSeriesDobj bhSeriesDobj=new ReassignmentToBHSeriesDobj();
 	private ArrayList<FitnessValidityDobj> fitnessValidityList = new ArrayList<>();
 	public static Map<String, String> vmtaxslabfieldsmap = new LinkedHashMap<String, String>();
 	public static Map<String, Map<String, String>> contextAwareCodeMeanings;
@@ -278,24 +284,40 @@ public class LoginBean implements Serializable {
 
 		}
 		if (purCd == TableConstants.VM_FITNESS_REVOCATION || purCd == TableConstants.VM_FITNESS_EXEMPTION
-				|| purCd == TableConstants.VM_FITNESS_CANCELLATION || purCd == TableConstants.VM_TRANSACTION_OWNER_VEHICLE_DETAILS_EDIT || purCd==TableConstants.VM_PARK_EXEMPTION_PUR_CD) {
+				|| purCd == TableConstants.VM_FITNESS_CANCELLATION
+				|| purCd == TableConstants.VM_TRANSACTION_OWNER_VEHICLE_DETAILS_EDIT
+				|| purCd == TableConstants.VM_PARK_EXEMPTION_PUR_CD || purCd == TableConstants.VM_TAX_CLEARANCE
+				|| purCd == TableConstants.VM_TAX_EXEMPTION) {
 			outcome = "redirectToFitnessRevocation";
-		}
-		else if(purCd==TableConstants.VM_RETENTION_OF_REGN_NO)
-		{
+			
+		} else if (purCd == TableConstants.VM_RETENTION_OF_REGN_NO) {
 			toretention.setCommonDobj(commonDobj);
 			toretention.setToRetention(new TransferOfOwnershipImpl().getTORetentionOfRegno(selectedState));
 			toretention.setToRetention(new TransferOfOwnershipImpl().getTORetentionOfRegnoForAllRegno(selectedState));
-			outcome="redirectToRetentionOfRegno";
-			
-		}
-		else if(purCd==TableConstants.VM_NONUSE_RESTORE_REMOVE)
-		{
+			outcome = "redirectToRetentionOfRegno";
+
+		} else if (purCd == TableConstants.VM_NONUSE_RESTORE_REMOVE) {
 			nonuseDobj.setCommonDobj(commonDobj);
 			new NonUseRestoreImpl().fetchNonuseAttributes(nonuseDobj);
-			outcome="redirectToNonuseRestore";
-		}
+			outcome = "redirectToNonuseRestore";
+		} else if (purCd == TableConstants.VM_TAX_INSTALLMENT) {
+			String tax = new CommonServiceImpl().getTaxInstallmentCondition(selectedState);
+			commonDobj.setTaxInstallment(tax);
 
+		}
+		else if (purCd == TableConstants.VM_SWAPPING_REGN_MARK) {
+			
+			swappingDobj.setCommonDobj(commonDobj);
+			new RetentionOrSwappingOfRegnImpl().getSwappingAttributes(swappingDobj);
+			outcome="redirectToRetentionOfRegn";
+
+		}
+		else if (purCd == TableConstants.VM_REASSIGNMENT_BH_SERIES || purCd==TableConstants.VM_REASSIGNMENT_BH_TO_RUNNING) {
+			bhSeriesDobj.setCommonDobj(commonDobj);
+			new ReassignmentToBHSeriesImpl().getReassignmentToBhSeries(bhSeriesDobj);
+			outcome="redirectToReassignmentToBHSeries";
+		}
+	
 		return outcome;
 
 	}
@@ -474,6 +496,22 @@ public class LoginBean implements Serializable {
 
 	public void setNonuseDobj(NonuseRestoreRemoveDobj nonuseDobj) {
 		this.nonuseDobj = nonuseDobj;
+	}
+
+	public RetentionOrSwappingOfRegnDobj getSwappingDobj() {
+		return swappingDobj;
+	}
+
+	public void setSwappingDobj(RetentionOrSwappingOfRegnDobj swappingDobj) {
+		this.swappingDobj = swappingDobj;
+	}
+
+	public ReassignmentToBHSeriesDobj getBhSeriesDobj() {
+		return bhSeriesDobj;
+	}
+
+	public void setBhSeriesDobj(ReassignmentToBHSeriesDobj bhSeriesDobj) {
+		this.bhSeriesDobj = bhSeriesDobj;
 	}
 	
 

@@ -258,6 +258,42 @@ public class CommonServiceImpl {
 		return hsrp;
 		
 	}
+	
+	public  String getTaxInstallmentCondition(String stateCd)
+	{
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		String taxInstallment="";
+		sql="select tax_installment from "+ TableList.TM_CONFIGURATION +" where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch tax installment condition ");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+				taxInstallment=rs.getString("tax_installment");
+			}
+		}
+
+		 catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+
+		}
+		return taxInstallment;
+		
+	}
 
 	
 	

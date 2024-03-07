@@ -4,20 +4,22 @@ import java.util.Map;
 
 public class CommonDobj {
 
-	public boolean serviceRto;
-	public boolean serviceCitizen;
-	public String feeExempt;
-	public Map<String,String> feesApplicable;
-	public String taxExempt;
-	public boolean uploadDocumentRto;
-	public boolean uploadDocumentCitizen;
-	public boolean mobileAuthenticationCitizen;
-	public boolean aadharAuthenticationCitizen;
-	public boolean applInwardOtherRto;
-	public boolean verifyBankOnhypth;
-	public boolean nocAllowForSameState;
-	public boolean hsrp;
-	public boolean oldhsrp;
+	private boolean serviceRto;
+	private boolean serviceCitizen;
+	private String feeExempt;
+	private Map<String,String> feesApplicable;
+	private String taxExempt;
+	private boolean uploadDocumentRto;
+	private boolean uploadDocumentCitizen;
+	private boolean mobileAuthenticationCitizen;
+	private boolean aadharAuthenticationCitizen;
+	private boolean applInwardOtherRto;
+	private boolean verifyBankOnhypth;
+	private boolean nocAllowForSameState;
+	private boolean hsrp;
+	private boolean oldhsrp;
+	private String taxInstallment;
+	
 	
 	
 	
@@ -141,6 +143,18 @@ public class CommonDobj {
 
 	public void setOldhsrp(boolean oldhsrp) {
 		this.oldhsrp = oldhsrp;
+	}
+
+
+
+	public String getTaxInstallment() {
+		return taxInstallment;
+	}
+
+
+
+	public void setTaxInstallment(String taxInstallment) {
+		this.taxInstallment = taxInstallment;
 	}
 	
 	

@@ -73,6 +73,18 @@
 			<from-outcome>redirectToNonuseRestore</from-outcome>
 			<to-view-id>/NonuseRestore.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>redirectToRetentionOfRegn</from-outcome>
+			<to-view-id>/RetentionOrSwappingOfRegnMark.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>redirectToReassignmentToBHSeries</from-outcome>
+			<to-view-id>/ReassignmentToBHSeries.xhtml</to-view-id>
+		</navigation-case>
+		
+		
+		
 		
 		
 

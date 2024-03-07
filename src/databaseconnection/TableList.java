@@ -132,6 +132,9 @@ abstract public class TableList implements Serializable {
 	public static final String VM_BLACKLIST_NOTTRANSACTED="vm_blacklist_nottransacted";
 	public static final String VM_BLACKLIST_NOTTRANSACTED_OTHERS="vm_blacklist_nottransacted_others";
 	public static final String TM_CONFIGURATION_BLACKLIST="tm_configuration_blacklist";
+	public static final String TM_CONFIGURATION_SWAPPING="tm_configuration_swapping";
+	public static final String TM_CONFIGURATION_BH_SERIES="tm_configuration_bh_series";
+	
 	
 
 	public static final String VT_OWNER = NEW_REG_SCHEMA + "VT_OWNER";

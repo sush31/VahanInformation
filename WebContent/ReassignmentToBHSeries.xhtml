@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<!--<h:head>-->
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</h:head>
+<h:body>
+	<h:form>
+
+		<p:dataTable value="#{loginBean.bhSeriesDobj}" var="item"
+			id="bhseries">
+			<f:facet name="header">
+				<p:outputLabel
+					value="Configuration Details of #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
+			</f:facet>
+
+			<p:column headerText="Service Related to RTO">
+				<p:outputLabel value="#{item.commonDobj.serviceRto}" />
+			</p:column>
+			<p:column headerText="Service Related to Citizen">
+				<p:outputLabel value="#{item.commonDobj.serviceCitizen}" />
+			</p:column>
+			<p:column headerText="Document Upload at RTO">
+				<p:outputLabel value="#{item.commonDobj.uploadDocumentRto}" />
+			</p:column>
+
+			<p:column headerText="Application inward at other RTO">
+				<p:outputLabel value="#{item.commonDobj.applInwardOtherRto}" />
+			</p:column>
+
+			<p:column headerText="BH Series allowed">
+				<p:outputLabel value="#{item.bhSeriesAllowed}" />
+			</p:column>
+
+			<p:column headerText="BH Series allowed for Transfer of Ownership">
+				<p:outputLabel value="#{item.bhSeriesToAllowed}" />
+			</p:column>
+
+		</p:dataTable>
+		<br />
+		<br />
+		<p:dataTable
+			value="#{loginBean.bhSeriesDobj.commonDobj.feesApplicable.entrySet()}" var="fees"
+			id="feestable">
+			<f:facet name="header">
+				<p:outputLabel
+					value="Fees applicable for  #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
+			</f:facet>
+			<p:column>
+				<f:facet name="header">Purpose</f:facet>
+           	                   #{fees.key}
+           
+                             </p:column>
+			<p:column>
+				<f:facet name="header">Condition</f:facet>
+                               #{fees.value}
+                              </p:column>
+             
+         </p:dataTable>
+         <br/><br/>
+
+		<p:dataTable value="#{loginBean.flowRto}" var="flowrto"
+			id="rtoflowtable">
+			<f:facet name="header">
+				<p:outputLabel
+					value="RTO Side flow of #{loginBean.purposeDescr} of #{loginBean.selectedState}" />
+			</f:facet>
+			<p:column headerText="flow_serial_no">
+				<p:outputLabel value="#{flowrto.flow_srno}" />
+			</p:column>
+			<p:column
+				headerText="Action Code whose description is given in adjacent column">
+				<p:outputLabel value="#{flowrto.action_cd}" />
+			</p:column>
+			<p:column headerText="Action Description">
+				<p:outputLabel value="#{flowrto.action_descr}" />
+			</p:column>
+			<p:column headerText="Is Backward">
+				<p:outputLabel value="#{flowrto.backward}" />
+			</p:column>
+			<p:column headerText="Conditon Formula Description">
+				<p:outputLabel value="#{flowrto.condition_formula}" />
+			</p:column>
+		</p:dataTable>
+		<br />
+		<br />
+		<p:button value="Back to Home" outcome="homePage" />
+	</h:form>
+</h:body>
+</html>
+
+
