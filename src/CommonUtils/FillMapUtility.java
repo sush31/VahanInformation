@@ -368,6 +368,8 @@ public class FillMapUtility {
 		contextAwareCodeMeanings.put("<22>", FillMapUtility.getFuelDescr());
 		contextAwareCodeMeanings.put("<28>", FillMapUtility.fillPmtSubCatgMap());
 		contextAwareCodeMeanings.put("<38>", FillMapUtility.getVehicleCatgDescr());
+		contextAwareCodeMeanings.put("<29>", FillMapUtility.getCriteriaDescr());
+		contextAwareCodeMeanings.put("<OWNER_CATG>", FillMapUtility.getOwnerCatgDescr());
 		contextAwareCodeMeanings.put("<action_cd>", FillMapUtility.fillActionCdDescr());
 		Map<String, String> vehTypeMap = new LinkedHashMap<String, String>();
 		Map<String, String> vehPurchasedAs = new LinkedHashMap<String, String>();
@@ -378,6 +380,64 @@ public class FillMapUtility {
 		contextAwareCodeMeanings.put("<46>", vehTypeMap);
 		contextAwareCodeMeanings.put("<26>", vehPurchasedAs);
 		return contextAwareCodeMeanings;
+	}
+
+	private static Map<String, String> getOwnerCatgDescr() {
+	
+		Map<String, String> ownerCatg = new LinkedHashMap<String, String>();
+		String sqlTmActionSQL = "SELECT owcatg_code,descr FROM  " + TableList.VM_OWCATG;
+		TransactionManagerReadOnly tmgr = null;
+		try {
+			tmgr = new TransactionManagerReadOnly("owner category description");
+			PreparedStatement prstmt = tmgr.prepareStatement(sqlTmActionSQL);
+			RowSet rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+				ownerCatg.put(String.valueOf(rs.getInt("owcatg_code")), rs.getString("descr"));
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			try {
+				if (tmgr != null) {
+					tmgr.release();
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		return ownerCatg;
+
+		
+	}
+
+	private static Map<String, String> getCriteriaDescr() {
+		
+		Map<String, String> criteriaDescr = new LinkedHashMap<String, String>();
+		String sqlTmActionSQL = "SELECT criteria_cd,criteria_desc FROM  " + TableList.VM_OTHER_CRITERIA;
+		TransactionManagerReadOnly tmgr = null;
+		try {
+			tmgr = new TransactionManagerReadOnly("criteria description");
+			PreparedStatement prstmt = tmgr.prepareStatement(sqlTmActionSQL);
+			RowSet rs = tmgr.fetchDetachedRowSet();
+			while (rs.next()) {
+				criteriaDescr.put(String.valueOf(rs.getInt("criteria_cd")), rs.getString("criteria_desc"));
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			try {
+				if (tmgr != null) {
+					tmgr.release();
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		return criteriaDescr;
+
+
 	}
 
 	public static String getActionDescr(int actionCode) {
@@ -840,6 +900,21 @@ public class FillMapUtility {
 				sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
 						+ " where state_cd=? and action='RBN'";
 			}
+		
+		 else if (purCd== TableConstants.VM_REASSIGNMENT_VINTAGE_VEHNO) {
+				sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+						+ " where state_cd=? and action='RRV'";
+			}
+		
+		 else if (purCd== TableConstants.VM_RETENTION_SCRAPPED_VEHICLE) {
+				sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+						+ " where state_cd=? and action='SVR'";
+			}
+		 else if (purCd== TableConstants.VM_SCRAPPED_VEHICLE) {
+				sql = "select pur_cd,condition_formula from  " + TableList.VC_ACTION_PURPOSE_MAP
+						+ " where state_cd=? and action='SCR'";
+			}
+
 
 		try {
 			tmgr = new TransactionManagerReadOnly("fetch fees");
@@ -968,7 +1043,7 @@ public class FillMapUtility {
 
 	}
 
-	public String getTaxExempt(String stateCd, int purCd) {
+	public static String getTaxExempt(String stateCd, int purCd) {
 
 		String taxExempt = "";
 		TransactionManagerReadOnly tmgr = null;
@@ -977,12 +1052,12 @@ public class FillMapUtility {
 		String sql = null;
 		sql = "select tax_exemption from  " + TableList.TM_CONFIGURATION + " where state_cd=?";
 		try {
-			tmgr = new TransactionManagerReadOnly("fetch new registartion attributes");
+			tmgr = new TransactionManagerReadOnly("fetch tax exemption attributes");
 			ps = tmgr.prepareStatement(sql);
 			ps.setString(1, stateCd);
 			rs = tmgr.fetchDetachedRowSet();
 			VehicleParameters parameter = new VehicleParameters();
-			parameter.setPUR_CD(1);
+			parameter.setPUR_CD(purCd);
 			if (rs.next()) {
 
 				taxExempt = rs.getString("tax_exemption");
@@ -992,12 +1067,14 @@ public class FillMapUtility {
 					taxExempt = taxExemption ? "true" : "false";
 				} else {
 					if (!taxExempt.contains("NOT")) {
-						if (taxExemption == true) {
+						if (taxExemption) {
 							taxExempt = "true";
 						}
-					} else {
-						taxExempt = interpretExpression(taxExempt);
-					}
+						else {
+							taxExempt = interpretExpression(taxExempt);
+						}
+					} 
+					
 
 				}
 

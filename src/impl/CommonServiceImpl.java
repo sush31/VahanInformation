@@ -11,6 +11,8 @@ import databaseconnection.TableList;
 import databaseconnection.TransactionManagerReadOnly;
 import dobj.ConversionOfVehicleDobj;
 import dobj.ConvertibleClasses;
+import dobj.ReassignmentToVintageVehicleDobj;
+import dobj.RenewalOfRegistrationDobj;
 
 public class CommonServiceImpl {
 
@@ -294,6 +296,75 @@ public class CommonServiceImpl {
 		return taxInstallment;
 		
 	}
+	
+
+	public void getVintageVehicleProperties(ReassignmentToVintageVehicleDobj vintageDobj, String stateCd) {
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		sql = " select vintage_allowed,vintage_owner_choice from tm_configuration_appl_inward_anywhere_in_state where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch vintage ");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+
+				vintageDobj.setVintageAllowed(rs.getBoolean("vintage_allowed"));
+				vintageDobj.setVintageOwnerChoice(rs.getBoolean("vintage_owner_choice"));
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+
+	}
+	
+	
+	public boolean getScrappedVehicleProperties(String stateCd) {
+		TransactionManagerReadOnly tmgr = null;
+		PreparedStatement ps = null;
+		RowSet rs = null;
+		String sql = null;
+		boolean scrap=false;
+		sql = " select scrap_veh_no_retain from "+ TableList.TM_CONFIGURATION +" where state_cd=?";
+		try {
+			tmgr = new TransactionManagerReadOnly("fetch scrapped veh ");
+			ps = tmgr.prepareStatement(sql);
+			ps.setString(1, stateCd);
+			rs = tmgr.fetchDetachedRowSet();
+			if (rs.next()) {
+
+				scrap= rs.getBoolean("scrap_veh_no_retain");
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} finally {
+			{
+				try {
+					if (tmgr != null) {
+						tmgr.release();
+					}
+				} catch (Exception ee) {
+
+				}
+			}
+		}
+		return scrap;
+	}
+
 
 	
 	

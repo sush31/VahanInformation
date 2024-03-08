@@ -36,13 +36,37 @@ and open the template in the editor.
 			<p:column headerText="Document Upload at RTO">
 				<p:outputLabel value="#{item.uploadDocumentRto}" />
 			</p:column>
+		
              <p:column headerText="Application inward at other RTO">
 				<p:outputLabel value="#{item.applInwardOtherRto}" />
+			</p:column>
+			
+			<p:column headerText="Owner has the option to Vehicle Number on scrapping the vehicle ">
+				<p:outputLabel value="#{item.scrappedVeh}" />
 			</p:column>
 		</p:dataTable>
 		<br />
 		<br />
 		
+		<p:dataTable
+			value="#{loginBean.commonDobj.feesApplicable.entrySet()}" var="fees"
+			id="feestable">
+			<f:facet name="header">
+				<p:outputLabel
+					value="Fees applicable for  #{loginBean.purposeDescr} for #{loginBean.selectedState}" />
+			</f:facet>
+			<p:column>
+				<f:facet name="header">Purpose</f:facet>
+           	                   #{fees.key}
+           
+                             </p:column>
+			<p:column>
+				<f:facet name="header">Condition</f:facet>
+                               #{fees.value}
+                              </p:column>
+             
+         </p:dataTable>
+
 
 		<p:dataTable value="#{loginBean.flowRto}" var="flowrto"
 			id="rtoflowtable">
@@ -70,7 +94,6 @@ and open the template in the editor.
 		</p:dataTable>
 		<br />
 		<br />
-		
 		<p:button value="Back to Home" outcome="homePage" />
 	</h:form>
 </h:body>

@@ -32,6 +32,7 @@ import dobj.NonuseRestoreRemoveDobj;
 import dobj.NottobeTransactedDobj;
 import dobj.PermitDobj;
 import dobj.ReassignmentToBHSeriesDobj;
+import dobj.ReassignmentToVintageVehicleDobj;
 import dobj.RenewalOfRegistrationDobj;
 import dobj.RetentionOrSwappingOfRegnDobj;
 import dobj.RtoServiceFlowDobj;
@@ -79,6 +80,7 @@ public class LoginBean implements Serializable {
 	private FitnessDobj fitnessDobj = new FitnessDobj();
 	private ToRetentionDobj toretention = new ToRetentionDobj();
 	private NonuseRestoreRemoveDobj nonuseDobj = new NonuseRestoreRemoveDobj();
+	private ReassignmentToVintageVehicleDobj vintageDobj= new ReassignmentToVintageVehicleDobj();
 	private RetentionOrSwappingOfRegnDobj swappingDobj=new RetentionOrSwappingOfRegnDobj();
 	private ReassignmentToBHSeriesDobj bhSeriesDobj=new ReassignmentToBHSeriesDobj();
 	private ArrayList<FitnessValidityDobj> fitnessValidityList = new ArrayList<>();
@@ -94,6 +96,7 @@ public class LoginBean implements Serializable {
 		vmtaxslabfieldsmap.remove("<46>");
 		vmtaxslabfieldsmap.put("<46>", "transport type");
 		vmtaxslabfieldsmap.put("<action_cd>", "action");
+		vmtaxslabfieldsmap.put("<OWNER_CATG>","OWNER CATEGORY");
 		contextAwareCodeMeanings = FillMapUtility.fetchContextAwareCodeMeaningsFromDatabase();
 
 	}
@@ -167,7 +170,7 @@ public class LoginBean implements Serializable {
 		commonDobj.setServiceRto(FillMapUtility.isServiceRto(selectedState, purCd));
 		commonDobj.setApplInwardOtherRto(FillMapUtility.getApplInwardOtherRto(selectedState, purCd));
 		commonDobj.setFeeExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
-		commonDobj.setTaxExempt(FillMapUtility.getFeesExempt(selectedState, purCd));
+		commonDobj.setTaxExempt(FillMapUtility.getTaxExempt(selectedState, purCd));
 		commonDobj.setUploadDocumentRto(FillMapUtility.getDocumentUploadRTO(selectedState, purCd));
 		commonDobj.setFeesApplicable(FillMapUtility.getFeesApplicableForNewRegn(selectedState, purCd));
 		flowRto = new PermitImpl().getRtoServiceFlow(selectedState, purCd, rtoFlowdobj);
@@ -303,6 +306,7 @@ public class LoginBean implements Serializable {
 		} else if (purCd == TableConstants.VM_TAX_INSTALLMENT) {
 			String tax = new CommonServiceImpl().getTaxInstallmentCondition(selectedState);
 			commonDobj.setTaxInstallment(tax);
+			outcome="redirectToTaxInstallment";
 
 		}
 		else if (purCd == TableConstants.VM_SWAPPING_REGN_MARK) {
@@ -317,7 +321,19 @@ public class LoginBean implements Serializable {
 			new ReassignmentToBHSeriesImpl().getReassignmentToBhSeries(bhSeriesDobj);
 			outcome="redirectToReassignmentToBHSeries";
 		}
-	
+		else if(purCd == TableConstants.VM_REASSIGNMENT_VINTAGE_VEHNO)
+		{
+			vintageDobj.setCommonDobj(commonDobj);
+			new CommonServiceImpl().getVintageVehicleProperties(vintageDobj,selectedState);
+			outcome="redirectToReassignmentToVintage";
+		}
+		
+		else if(purCd == TableConstants.VM_RETENTION_SCRAPPED_VEHICLE || purCd == TableConstants.VM_SCRAPPED_VEHICLE )
+		{
+			commonDobj.setScrappedVeh(new CommonServiceImpl().getScrappedVehicleProperties(selectedState));
+			outcome="redirectToRetentionOfScrappedVehicle";
+		}
+		
 		return outcome;
 
 	}
@@ -513,6 +529,15 @@ public class LoginBean implements Serializable {
 	public void setBhSeriesDobj(ReassignmentToBHSeriesDobj bhSeriesDobj) {
 		this.bhSeriesDobj = bhSeriesDobj;
 	}
+
+	public ReassignmentToVintageVehicleDobj getVintageDobj() {
+		return vintageDobj;
+	}
+
+	public void setVintageDobj(ReassignmentToVintageVehicleDobj vintageDobj) {
+		this.vintageDobj = vintageDobj;
+	}
+	
 	
 
 }

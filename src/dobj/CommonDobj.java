@@ -19,6 +19,7 @@ public class CommonDobj {
 	private boolean hsrp;
 	private boolean oldhsrp;
 	private String taxInstallment;
+	private boolean scrappedVeh;
 	
 	
 	
@@ -156,6 +157,19 @@ public class CommonDobj {
 	public void setTaxInstallment(String taxInstallment) {
 		this.taxInstallment = taxInstallment;
 	}
+
+
+
+	public boolean isScrappedVeh() {
+		return scrappedVeh;
+	}
+
+
+
+	public void setScrappedVeh(boolean scrappedVeh) {
+		this.scrappedVeh = scrappedVeh;
+	}
+	
 	
 	
 	

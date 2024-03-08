@@ -83,13 +83,23 @@
 			<to-view-id>/ReassignmentToBHSeries.xhtml</to-view-id>
 		</navigation-case>
 		
+		<navigation-case>
+			<from-outcome>redirectToReassignmentToVintage</from-outcome>
+			<to-view-id>/ReassignmentToVintageVehicle.xhtml</to-view-id>
+		</navigation-case>
 		
 		
+		<navigation-case>
+			<from-outcome>redirectToRetentionOfScrappedVehicle</from-outcome>
+			<to-view-id>/RetentionOfScrappedVehicle.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>redirectToTaxInstallment</from-outcome>
+			<to-view-id>/TaxInstallment.xhtml</to-view-id>
+		</navigation-case>
 		
 		
-
-		
-
 	</navigation-rule>
 
 
